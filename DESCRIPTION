@@ -11,3 +11,8 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/sa-lee/vaast
 BugReports: https://github.com/sa-lee/vaast/issues
+Imports: 
+    igraph,
+    RTriangle,
+    hexbin
+RoxygenNote: 7.1.1
