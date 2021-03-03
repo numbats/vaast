@@ -18,6 +18,8 @@ scree <- function(x, y, num_bins = 30, ...) {
   # should x,y be rescaled?
   hb <- hexbin::hexbin(x, y, xbins = num_bins)
 
+  # this is a change
+
   # compute the triangulation using the hexbin centres
   del <- RTriangle::triangulate(
     RTriangle::pslg(cbind(hb@xcm, hb@ycm))
