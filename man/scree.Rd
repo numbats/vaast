@@ -9,9 +9,9 @@ scree(x, y, binner = NULL, ...)
 \arguments{
 \item{x, y}{numeric vectors}
 
-\item{...}{other args}
+\item{binner}{a function that}
 
-\item{num_bins}{(default = 30)}
+\item{...}{other args}
 }
 \value{
 A list of graph objects with three components
