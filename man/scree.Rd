@@ -4,14 +4,14 @@
 \alias{scree}
 \title{Generate an scatter tree}
 \usage{
-scree(x, y, num_bins = 30, ...)
+scree(x, y, binner = NULL, ...)
 }
 \arguments{
 \item{x, y}{numeric vectors}
 
-\item{num_bins}{(default = 30)}
-
 \item{...}{other args}
+
+\item{num_bins}{(default = 30)}
 }
 \value{
 A list of graph objects with three components

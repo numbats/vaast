@@ -1,7 +1,7 @@
 #' Generate an scatter tree
 #'
 #' @param x,y numeric vectors
-#' @param num_bins (default = 30)
+#' @param binner a function that
 #' @param ...  other args
 #'
 #' @return A list of graph objects with three components
@@ -9,60 +9,73 @@
 #'  - convex hull
 #'  - concave hull (alpha hull)
 #' @export
-#' @importFrom igraph E
-scree <- function(x, y, num_bins = 30, ...) {
-  stopifnot(is.numeric(x),
-            is.numeric(y),
-            length(x) == length(y))
-
-  # should x,y be rescaled?
-  hb <- hexbin::hexbin(x, y, xbins = num_bins)
-
-  # this is a change
-
-  # compute the triangulation using the hexbin centres
-  del <- RTriangle::triangulate(
-    RTriangle::pslg(cbind(hb@xcm, hb@ycm))
+scree <- function(x, y, binner = NULL, ...) {
+  # checks on x,y
+  stopifnot(
+    is.numeric(x), is.numeric(y), length(x) == length(y)
   )
 
-  # create a graph from the edges of the triangulation
-  graph <- igraph::graph_from_edgelist(del$E, directed = FALSE)
-  # the vertices here are the indices of hexbinned points
-  # we also add the counts
-  graph <- igraph::set_vertex_attr(graph, "x", value = del$P[,1])
-  graph <- igraph::set_vertex_attr(graph, "y", value = del$P[,2])
-  graph <- igraph::set_vertex_attr(graph, "counts", value = hb@count)
-  # add edge weights according to distance between edges of points
-  graph <- igraph::set_edge_attr(graph,
-                                 "weight",
-                                 value = edge_weights(del$P, del$E))
+  if (!(is.null(binner) | is.function(binner)))
+    stop("binner must be a function")
 
-  # convex hull is given by the segments of del, i.e. del$S
-  chull <- igraph::graph_from_edgelist(del$S, directed = FALSE)
+  # cast to a matrix
+  xy <- cbind(unitize(x), unitize(y))
 
-  # concave hull is computed via triangulation
+  if (is.function(binner)) {
+    xy <- binner(xy)
+  }
 
-  # spanning tree, weighted by the lengths between points
-  mst<- igraph::mst(graph, weights = E(graph)$weight)
+  # compute delauney triangulation
+  del <- alphahull::delvor(xy)
 
-  list(mst, chull, ahull = list())
+  # edge weights from the triangulation
+  weights <- gen_edge_lengths(del)
 
+  # alpha estimator
+  alpha <- psi(weights)
+
+  structure(
+    list(del = del,
+         weights  = weights,
+         alpha = alpha,
+         mst = gen_mst,
+         alpha_hull = gen_alpha_hull,
+         conv_hull = gen_conv_hull
+    ),
+    class = "scree")
 }
 
-edge_weights <- function(points, edges) {
-  sqrt(rowSums((points[edges[,1],] - points[edges[,2], ])^2))
+
+gen_edge_lengths <- function(del) {
+  from_cols <- c("x1", "y1")
+  to_cols <- c("x2", "y2")
+  sqrt(rowSums((del$mesh[, from_cols] - del$mesh[, to_cols])^2))
 }
 
-# generate the edges of the alpha shape graph using Edelsbrunner's algorithm
-# an alternative would be to use alphahull package for all steps,
-# including the triangulation
-alpha_hull <- function(del, alpha) {
-
+gen_mst <- function(del, weights = gen_edge_lengths(del)) {
+  edges <- del$mesh[, c("ind1", "ind2")]
+  graph <- igraph::graph_from_edgelist(edges, directed = FALSE)
+  graph <- igraph::set_edge_attr(graph, "weight", value = weights)
+  igraph::mst(graph, weights =  igraph::E(graph)$weight)
 }
 
+
+gen_conv_hull <- function(del) {
+  tripack::convex.hull(del$tri.obj)
+}
+
+gen_alpha_hull <- function(del, alpha) {
+  alphahull::ahull(del, alpha = alpha)
+}
+
+# rescale input to lie in unit interval
+unitize <- function(x, na.rm = TRUE) {
+  rng <- range(x, na.rm = na.rm)
+  (x - rng[1]) / diff(rng)
+}
 
 # This is the edge filter from Wilkinson 05
 psi <- function(w, q = c(0.25, 0.75)) {
   q <- quantile(w, probs = q)
-  q[2] + 1.5 * diff(q)
+  unname(q[2] + 1.5 * diff(q))
 }
