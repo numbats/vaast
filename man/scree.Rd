@@ -2,23 +2,25 @@
 % Please edit documentation in R/scree.R
 \name{scree}
 \alias{scree}
-\title{Generate an scatter tree}
+\title{Pre-processing to generate scagnostic measures}
 \usage{
 scree(x, y, binner = NULL, ...)
 }
 \arguments{
 \item{x, y}{numeric vectors}
 
-\item{binner}{a function that}
+\item{binner}{an optional function that bins the x and y vectors prior
+to triangulation}
 
 \item{...}{other args}
 }
 \value{
-A list of graph objects with three components
- - minimum spanning tree
- - convex hull
- - concave hull (alpha hull)
+An object of class "scree" that consists of three elements:
+ - `del`: the Delauney-Vornoi tesselation from [alphahull::delvor()]
+ - `weights`: the lengths of each edge in the Delauney triangulation
+ - `alpha`: the radius or `alpha` value that will be used to generate the
+ alphahull
 }
 \description{
-Generate an scatter tree
+Pre-processing to generate scagnostic measures
 }

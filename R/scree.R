@@ -1,13 +1,15 @@
-#' Generate an scatter tree
+#' Pre-processing to generate scagnostic measures
 #'
 #' @param x,y numeric vectors
-#' @param binner a function that
+#' @param binner an optional function that bins the x and y vectors prior
+#' to triangulation
 #' @param ...  other args
 #'
-#' @return A list of graph objects with three components
-#'  - minimum spanning tree
-#'  - convex hull
-#'  - concave hull (alpha hull)
+#' @return An object of class "scree" that consists of three elements:
+#'  - `del`: the Delauney-Vornoi tesselation from [alphahull::delvor()]
+#'  - `weights`: the lengths of each edge in the Delauney triangulation
+#'  - `alpha`: the radius or `alpha` value that will be used to generate the
+#'  alphahull
 #' @export
 scree <- function(x, y, binner = NULL, ...) {
   # checks on x,y
@@ -35,37 +37,19 @@ scree <- function(x, y, binner = NULL, ...) {
   alpha <- psi(weights)
 
   structure(
-    list(del = del,
-         weights  = weights,
-         alpha = alpha,
-         mst = gen_mst,
-         alpha_hull = gen_alpha_hull,
-         conv_hull = gen_conv_hull
+    list(
+      del = del,
+      weights  = weights,
+      alpha = alpha
     ),
-    class = "scree")
+    class = "scree"
+  )
 }
-
 
 gen_edge_lengths <- function(del) {
   from_cols <- c("x1", "y1")
   to_cols <- c("x2", "y2")
   sqrt(rowSums((del$mesh[, from_cols] - del$mesh[, to_cols])^2))
-}
-
-gen_mst <- function(del, weights = gen_edge_lengths(del)) {
-  edges <- del$mesh[, c("ind1", "ind2")]
-  graph <- igraph::graph_from_edgelist(edges, directed = FALSE)
-  graph <- igraph::set_edge_attr(graph, "weight", value = weights)
-  igraph::mst(graph, weights =  igraph::E(graph)$weight)
-}
-
-
-gen_conv_hull <- function(del) {
-  tripack::convex.hull(del$tri.obj)
-}
-
-gen_alpha_hull <- function(del, alpha) {
-  alphahull::ahull(del, alpha = alpha)
 }
 
 # rescale input to lie in unit interval
