@@ -1,5 +1,26 @@
 
-
+#' Compute convex scagnostic measures
+#'
+#' @examples
+#'   require(ggplot2)
+#'   require(tidyr)
+#'   require(dplyr)
+#'   data(anscombe)
+#'   anscombe_tidy <- anscombe %>%
+#'   pivot_longer(cols = everything(),
+#'     names_to = c(".value", "set"),
+#'     names_pattern = "(.)(.)")
+#'   ggplot(anscombe_tidy, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~set, ncol=2, scales = "free")
+#'   a_s <- scree(anscombe$x1, anscombe$y1)
+#'   sc_convex(a_s)
+#'   a_s <- scree(anscombe$x2, anscombe$y2)
+#'   sc_convex(a_s)
+#'   a_s <- scree(anscombe$x3, anscombe$y3)
+#'   sc_convex(a_s)
+#'   a_s <- scree(anscombe$x4, anscombe$y4)
+#'   sc_convex(a_s)
 #' @export
 sc_convex <- function(x, y) UseMethod("sc_convex")
 
@@ -13,13 +34,35 @@ sc_convex.scree <- function(x,y = NULL) {
   ahull_area / chull_area
 }
 
+#' Compute convex scagnostic measures
+#'
+#' @examples
+#'   require(ggplot2)
+#'   require(tidyr)
+#'   require(dplyr)
+#'   data(anscombe)
+#'   anscombe_tidy <- anscombe %>%
+#'   pivot_longer(cols = everything(),
+#'     names_to = c(".value", "set"),
+#'     names_pattern = "(.)(.)")
+#'   ggplot(anscombe_tidy, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~set, ncol=2, scales = "free")
+#'   a_s <- scree(anscombe$x1, anscombe$y1)
+#'   sc_skinny(a_s)
+#'   a_s <- scree(anscombe$x2, anscombe$y2)
+#'   sc_skinny(a_s)
+#'   a_s <- scree(anscombe$x3, anscombe$y3)
+#'   sc_skinny(a_s)
+#'   a_s <- scree(anscombe$x4, anscombe$y4)
+#'   sc_skinny(a_s)
 #' @export
 sc_skinny <- function(x, y) UseMethod("sc_skinny")
 
 #' @export
 sc_skinny.scree <- function(x, y = NULL) {
   stopifnot(is.null(y))
-  ahull <- gne_alpha_hull(x$del, x$alpha)
+  ahull <- gen_alpha_hull(x$del, x$alpha)
   ahull_area <- alphahull::areaahull(ahull)
   1 - sqrt(4*pi * ahull_area) / ahull$length
 }

@@ -10,6 +10,8 @@
 #'  - `weights`: the lengths of each edge in the Delauney triangulation
 #'  - `alpha`: the radius or `alpha` value that will be used to generate the
 #'  alphahull
+#'
+#' @examples
 #' @export
 scree <- function(x, y, binner = NULL, ...) {
   # checks on x,y
