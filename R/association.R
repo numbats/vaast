@@ -5,7 +5,6 @@
 #'
 #' @return double
 #' @export
-
 sc_monotonic <- function(x, y){
   cor(x, y, method='spearman')
 }
