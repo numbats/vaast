@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #' Measure of Spearman Correlation
 #'
 #' @param x numeric vector
@@ -9,3 +10,6 @@
 sc_monotonic <- function(x, y){
   cor(x, y, method='spearman')
 }
+=======
+# association measures go here
+>>>>>>> 25f9207bf6d363ae2ca5dfaab00752e72cb67df7
