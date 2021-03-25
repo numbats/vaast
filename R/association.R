@@ -38,8 +38,8 @@ sc_monotonic <- function(x, y){
 #'
 #' @export
 sc_splines <- function(x,y) {
-  mat <- matrix(c(x,y), nrow=length(x), byrow=FALSE)
-  tourr::splines2d(mat)
+  dat <- matrix(c(x,y), nrow=length(x), byrow=FALSE)
+  tourr::splines2d(dat)
 }
 
 #' Distance correlation index.
@@ -50,8 +50,17 @@ sc_splines <- function(x,y) {
 #'
 #' @keywords hplot
 #' @importFrom stats na.omit
+#' @param x numeric vector
+#' @param y numeric vector
 #' @export
-sc_dcor2d <- function(x,y) {
-  mat <- matrix(c(x,y), nrow=length(x), byrow=FALSE)
-  tourr::dcor2d(mat)
+#sc_dcor <- function(x,y) {
+#  dat <- matrix(c(x,y), nrow=length(x), byrow=FALSE)
+#  tourr::dcor2d(dat)
+#}
+sc_dcor <- function() {
+  function(x,y) {
+    xy <- na.omit(data.frame(x = x, y = y))
+    measure <- with(xy, energy::dcor(x, y))
+    return(measure)
+  }
 }
