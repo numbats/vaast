@@ -9,6 +9,11 @@ sc_stringy.scree <- function(x, y = NULL) {
   sum(vertex_counts == 2) / (length(vertex_counts) - sum(vertex_counts == 1))
 }
 
+sc_stringy.default <- function(x,y){
+  sc <- scree(x,y)
+  sc_stringy.scree(sc)
+}
+
 gen_mst <- function(del, weights) {
   edges <- del$mesh[, c("ind1", "ind2")]
   graph <- igraph::graph_from_edgelist(edges, directed = FALSE)
