@@ -21,7 +21,7 @@
 #'   sc_monotonic(anscombe$x4, anscombe$y4)
 #' @export
 sc_monotonic <- function(x, y){
-  stats::cor(x, y, method='spearman')
+  abs(stats::cor(x, y, method='spearman'))
 }
 
 #' Spline based index.
@@ -38,13 +38,17 @@ sc_monotonic <- function(x, y){
 #'
 #' @export
 sc_splines <- function(x,y) {
-  dat <- matrix(c(x,y), nrow=length(x), byrow=FALSE)
-  tourr::splines2d(dat)
+  kx <- ifelse(length(unique(x[!is.na(x)])) < 20, 3, 10)
+  ky <- ifelse(length(unique(y[!is.na(y)])) < 20, 3, 10)
+  mgam1 <- mgcv::gam(y ~ s(x, bs = "cr", k = kx))
+  mgam2 <- mgcv::gam(x ~ s(y, bs = "cr", k = ky))
+  measure <- max(1 - var(residuals(mgam1), na.rm = T) / var(y, na.rm = T), 1 - var(residuals(mgam2), na.rm = T) / var(x, na.rm = T))
+  return(measure)
 }
 
 #' Distance correlation index.
 #'
-#'(Taken from tourr git repo)
+#' (Taken from tourr git repo)
 #' Computes the distance correlation based index on
 #' 2D projections of the data.
 #'
@@ -57,10 +61,8 @@ sc_splines <- function(x,y) {
 #  dat <- matrix(c(x,y), nrow=length(x), byrow=FALSE)
 #  tourr::dcor2d(dat)
 #}
-sc_dcor <- function() {
-  function(x,y) {
-    xy <- na.omit(data.frame(x = x, y = y))
-    measure <- with(xy, energy::dcor(x, y))
-    return(measure)
-  }
+sc_dcor <- function(x,y) {
+  xy <- na.omit(data.frame(x = x, y = y))
+  measure <- with(xy, energy::dcor(x, y))
+  return(measure)
 }
