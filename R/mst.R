@@ -4,13 +4,13 @@ sc_stringy <- function(x, y) UseMethod("sc_stringy")
 #' @export
 sc_stringy.scree <- function(x, y = NULL) {
   stopifnot(is.null(y))
-  mst <-gen_mst(x$del, x$weights)
+  mst <- gen_mst(x$del, x$weights)
   vertex_counts <- igraph::degree(mst)
   sum(vertex_counts == 2) / (length(vertex_counts) - sum(vertex_counts == 1))
 }
 
-sc_stringy.default <- function(x,y){
-  sc <- scree(x,y)
+sc_stringy.default <- function(x, y){
+  sc <- scree(x, y)
   sc_stringy.scree(sc)
 }
 
