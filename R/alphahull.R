@@ -34,6 +34,11 @@ sc_convex.scree <- function(x,y = NULL) {
   ahull_area / chull_area
 }
 
+sc_convex.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_convex.scree(sc)
+}
+
 #' Compute convex scagnostic measures
 #'
 #' @examples
@@ -65,6 +70,11 @@ sc_skinny.scree <- function(x, y = NULL) {
   ahull <- gen_alpha_hull(x$del, x$alpha)
   ahull_area <- alphahull::areaahull(ahull)
   1 - sqrt(4*pi * ahull_area) / ahull$length
+}
+
+sc_skinny.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_skinny.scree(sc)
 }
 
 gen_conv_hull <- function(del) {
