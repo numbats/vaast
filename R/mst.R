@@ -20,3 +20,18 @@ gen_mst <- function(del, weights) {
   graph <- igraph::set_edge_attr(graph, "weight", value = weights)
   igraph::mst(graph, weights =  igraph::E(graph)$weight)
 }
+
+#' Compute stirated scagnostic measure using MST
+#'
+#' @examples
+#' @export
+sc_stirated <- function(x, y) UseMethod("sc_stirated")
+
+#' @export
+sc_stirated.scree <- function(x, y = NULL) {
+  }
+
+sc_stirated.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_stirated.scree(sc)
+}
