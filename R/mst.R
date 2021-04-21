@@ -31,10 +31,12 @@ sc_striated <- function(x, y) UseMethod("sc_striated")
 sc_striated.scree <- function(x, y = NULL) {
   #make mst
   mst <- gen_mst(x$del, x$weights)
+  #find verts with >1 connection
+  vertex_counts <- igraph::degree(mst)
+  weights <- igraph::E(mst)$weight
   #cos on adjacent edges in mst
   #sum of indicator func on <0.75 (=1 for ang 0 to 40 deg)
   #1/|v|scale
-  vertex_counts <- igraph::degree(mst)
 
   }
 
