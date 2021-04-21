@@ -33,8 +33,16 @@ sc_striated.scree <- function(x, y = NULL) {
   mst <- gen_mst(x$del, x$weights)
   #find verts with >1 connection
   vertex_counts <- igraph::degree(mst)
-  weights <- igraph::E(mst)$weight
+  #weights <- igraph::E(mst)$weight
+  #pull out weights
   #cos on adjacent edges in mst
+  angs <- which(vertex_counts>1)
+  angles_vect <- numeric(sum(vertex_counts-1))
+  for(i in 1:length(lengles_vect)){
+    points = x$del$x[which(mymst[angs[i]]>0),]
+    b = x$del$x[angs]
+    #adj_weights <- mymst[angs[i]][which(angs[i]>0)]
+  }
   #sum of indicator func on <0.75 (=1 for ang 0 to 40 deg)
   #1/|v|scale
 
