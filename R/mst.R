@@ -25,13 +25,20 @@ gen_mst <- function(del, weights) {
 #'
 #' @examples
 #' @export
-sc_stirated <- function(x, y) UseMethod("sc_stirated")
+sc_striated <- function(x, y) UseMethod("sc_striated")
 
 #' @export
-sc_stirated.scree <- function(x, y = NULL) {
+sc_striated.scree <- function(x, y = NULL) {
+  #make mst
+  mst <- gen_mst(x$del, x$weights)
+  #cos on adjacent edges in mst
+  #sum of indicator func on <0.75 (=1 for ang 0 to 40 deg)
+  #1/|v|scale
+  vertex_counts <- igraph::degree(mst)
+
   }
 
-sc_stirated.default <- function(x, y){
+sc_striated.default <- function(x, y){
   sc <- scree(x, y)
-  sc_stirated.scree(sc)
+  sc_striated.scree(sc)
 }
