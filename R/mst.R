@@ -24,28 +24,36 @@ gen_mst <- function(del, weights) {
 #' Compute stirated scagnostic measure using MST
 #'
 #' @examples
+#'   require(ggplot2)
+#'   require(tidyr)
+#'   require(dplyr)
+#'   data(anscombe_tidy)
+#'   ggplot(anscombe_tidy, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~set, ncol=2, scales = "free")
+#'   sc_striated(anscombe$x1, anscombe$y1)
+#'   sc_striated(anscombe$x2, anscombe$y2)
+#'   sc_striated(anscombe$x3, anscombe$y3)
+#'   sc_striated(anscombe$x4, anscombe$y4)
+#'
 #' @export
 sc_striated <- function(x, y) UseMethod("sc_striated")
 
 #' @export
 sc_striated.scree <- function(x, y = NULL) {
-  #make mst
   mst <- gen_mst(x$del, x$weights)
-  #find verts with >1 connection
   vertex_counts <- igraph::degree(mst)
-  #weights <- igraph::E(mst)$weight
-  #pull out weights
-  #cos on adjacent edges in mst
-  angs <- which(vertex_counts>1)
-  angles_vect <- numeric(sum(vertex_counts-1))
-  for(i in 1:length(lengles_vect)){
-    points = x$del$x[which(mymst[angs[i]]>0),]
-    b = x$del$x[angs]
-    #adj_weights <- mymst[angs[i]][which(angs[i]>0)]
+  angs <- which(vertex_counts==2)
+  angles_vect <- numeric(length(angs))
+  for(i in seq_len(length(angs))){
+    adjs <- which(mst[angs[i]]>0)
+    points <- x$del$x[adjs,]
+    origin <- x$del$x[angs[i],]
+    vects <- t(t(points)-origin)
+    angles_vect[i] <- (vects[1,]%*%vects[2,])/(prod(mst[angs[i]][adjs]))
   }
-  #sum of indicator func on <0.75 (=1 for ang 0 to 40 deg)
-  #1/|v|scale
-
+  striated <- (sum(ifelse(angles_vect<(-0.75),1,0)))/length(vertex_counts)
+  return(striated)
   }
 
 sc_striated.default <- function(x, y){
