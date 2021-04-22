@@ -75,3 +75,31 @@ sc_striated.default <- function(x, y){
   sc <- scree(x, y)
   sc_striated.scree(sc)
 }
+
+#' Compute clumpy scagnostic measure using MST
+#'
+#' @examples
+#'   require(ggplot2)
+#'   require(tidyr)
+#'   require(dplyr)
+#'   data(anscombe_tidy)
+#'   ggplot(anscombe_tidy, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~set, ncol=2, scales = "free")
+#'   sc_clumpy(anscombe$x1, anscombe$y1)
+#'   sc_clumpy(anscombe$x2, anscombe$y2)
+#'   sc_clumpy(anscombe$x3, anscombe$y3)
+#'   sc_clumpy(anscombe$x4, anscombe$y4)
+#'
+#' @export
+sc_clumpy <- function(x, y) UseMethod("sc_striated")
+
+#' @export
+sc_clumpy.scree <- function(x, y = NULL) {
+}
+
+sc_clumpy.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_clumpy.scree(sc)
+}
+
