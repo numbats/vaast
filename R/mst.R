@@ -51,6 +51,14 @@ gen_mst <- function(del, weights) {
 #'   sc_striated(anscombe$x3, anscombe$y3)
 #'   sc_striated(anscombe$x4, anscombe$y4)
 #'
+#'   ggplot(datasaurus_dozen, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~dataset, ncol=3, scales = "free")
+#'   sc_striated(datasaurus_dozen_wide$away_x, datasaurus_dozen_wide$away_y)
+#'   sc_striated(datasaurus_dozen_wide$dino_x, datasaurus_dozen_wide$dino_y)
+#'   sc_striated(datasaurus_dozen_wide$dots_x, datasaurus_dozen_wide$dots_y)
+#'   sc_striated(datasaurus_dozen_wide$h_lines_x, datasaurus_dozen_wide$h_lines_y)
+#'
 #' @export
 sc_striated <- function(x, y) UseMethod("sc_striated")
 
