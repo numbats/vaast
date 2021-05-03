@@ -1,3 +1,4 @@
+
 #' Compute stringy scagnostic measure using MST
 #'
 #' @examples
