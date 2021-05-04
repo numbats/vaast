@@ -51,6 +51,9 @@ sc_monotonic <- function(x, y){
 #'   sc_splines(anscombe$x3, anscombe$y3)
 #' @export
 sc_splines <- function(x,y) {
+  if (!requireNamespace("mgcv", quietly = TRUE)) {
+    stop("Package: mgcv must be installed to use splines scagnostic")
+  }
   kx <- ifelse(length(unique(x[!is.na(x)])) < 20, 3, 10)
   ky <- ifelse(length(unique(y[!is.na(y)])) < 20, 3, 10)
   mgam1 <- mgcv::gam(y ~ s(x, bs = "cr", k = kx))
@@ -85,6 +88,9 @@ sc_splines <- function(x,y) {
 #'   sc_dcor(anscombe$x4, anscombe$y4)
 #' @export
 sc_dcor <- function(x,y) {
+  if (!requireNamespace("energy", quietly = TRUE)) {
+    stop("Package: energy is required to compute dcor scagnostic.")
+  }
   xy <- na.omit(data.frame(x = x, y = y))
   measure <- with(xy, energy::dcor(x, y))
   return(measure)

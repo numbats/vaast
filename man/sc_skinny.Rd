@@ -13,7 +13,7 @@ Compute convex scagnostic measures
   require(ggplot2)
   require(tidyr)
   require(dplyr)
-  data(anscombe)
+  data(anscombe_tidy)
   anscombe_tidy <- anscombe \%>\%
   pivot_longer(cols = everything(),
     names_to = c(".value", "set"),

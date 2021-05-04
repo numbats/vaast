@@ -12,6 +12,11 @@
 #'  alphahull
 #'
 #' @examples
+#'
+#' x <- runif(100)
+#' y <- runif(100)
+#' scree(x,y)
+#'
 #' @export
 scree <- function(x, y, binner = NULL, ...) {
   # checks on x,y

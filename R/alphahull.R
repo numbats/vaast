@@ -34,6 +34,7 @@ sc_convex.scree <- function(x,y = NULL) {
   ahull_area / chull_area
 }
 
+#' @export
 sc_convex.default <- function(x, y){
   sc <- scree(x, y)
   sc_convex.scree(sc)
@@ -45,7 +46,7 @@ sc_convex.default <- function(x, y){
 #'   require(ggplot2)
 #'   require(tidyr)
 #'   require(dplyr)
-#'   data(anscombe)
+#'   data(anscombe_tidy)
 #'   anscombe_tidy <- anscombe %>%
 #'   pivot_longer(cols = everything(),
 #'     names_to = c(".value", "set"),
@@ -72,6 +73,7 @@ sc_skinny.scree <- function(x, y = NULL) {
   1 - sqrt(4*pi * ahull_area) / ahull$length
 }
 
+#' @export
 sc_skinny.default <- function(x, y){
   sc <- scree(x, y)
   sc_skinny.scree(sc)

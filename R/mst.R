@@ -25,6 +25,7 @@ sc_stringy.scree <- function(x, y = NULL) {
   sum(vertex_counts == 2) / (length(vertex_counts) - sum(vertex_counts == 1))
 }
 
+#' @export
 sc_stringy.default <- function(x, y){
   sc <- scree(x, y)
   sc_stringy.scree(sc)
@@ -80,6 +81,7 @@ sc_striated.scree <- function(x, y = NULL) {
   return(striated)
   }
 
+#' @export
 sc_striated.default <- function(x, y){
   sc <- scree(x, y)
   sc_striated.scree(sc)
@@ -101,12 +103,13 @@ sc_striated.default <- function(x, y){
 #'   sc_clumpy(anscombe$x4, anscombe$y4)
 #'
 #' @export
-sc_clumpy <- function(x, y) UseMethod("sc_striated")
+sc_clumpy <- function(x, y) UseMethod("sc_clumpy")
 
 #' @export
 sc_clumpy.scree <- function(x, y = NULL) {
 }
 
+#' @export
 sc_clumpy.default <- function(x, y){
   sc <- scree(x, y)
   sc_clumpy.scree(sc)

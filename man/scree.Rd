@@ -24,3 +24,10 @@ An object of class "scree" that consists of three elements:
 \description{
 Pre-processing to generate scagnostic measures
 }
+\examples{
+
+x <- runif(100)
+y <- runif(100)
+scree(x,y)
+
+}

@@ -1,7 +1,7 @@
 Package: vaast
 Type: Package
 Title: What the Package Does (Title Case)
-Version: 0.1.0
+Version: 0.1.9999
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
@@ -9,11 +9,19 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/sa-lee/vaast
-BugReports: https://github.com/sa-lee/vaast/issues
+URL: https://github.com/numbats/vaast
+BugReports: https://github.com/numbats/vaast/issues
 Imports: 
     igraph,
     alphahull,
     splancs,
-    tripack
+    tripack,
+    dplyr,
+    ggplot2
 RoxygenNote: 7.1.1
+Suggests: 
+    rmarkdown,
+    knitr,
+    mgcv,
+    energy
+VignetteBuilder: knitr
