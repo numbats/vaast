@@ -107,6 +107,13 @@ sc_clumpy <- function(x, y) UseMethod("sc_clumpy")
 
 #' @export
 sc_clumpy.scree <- function(x, y = NULL) {
+  mymst <- matrix(mst[], nrow=11)
+  mymst[upper.tri(mymst, diag = FALSE)]=0
+  clumpy <- rep(0,11-1)
+  edges <- which(mymst>0)
+  iterationm <- mymst
+  iterationm[edges[1]]=0
+  iteratione <- edges[-1]
 }
 
 #' @export
