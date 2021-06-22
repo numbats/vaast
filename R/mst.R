@@ -107,13 +107,53 @@ sc_clumpy <- function(x, y) UseMethod("sc_clumpy")
 
 #' @export
 sc_clumpy.scree <- function(x, y = NULL) {
-  mymst <- matrix(mst[], nrow=11)
-  mymst[upper.tri(mymst, diag = FALSE)]=0
-  clumpy <- rep(0,11-1)
-  edges <- which(mymst>0)
-  iterationm <- mymst
-  iterationm[edges[1]]=0
-  iteratione <- edges[-1]
+  mymst <- gen_mst(x$del, x$weights)
+  mstmat <- matrix(mymst[], nrow=11)
+  mstmat[upper.tri(mstmat, diag = FALSE)]=0
+  edges <- which(mstmat>0)
+  clumpy <- rep(0,length(edges))
+  for(i in seq(length(edges))){
+    #create the matrix we will pull appart to create the two clusters
+    iteration <- mstmat
+    jval <- iteration[edges[i]]
+    #intialise cluster and remove target value
+    cluster1 <- NULL
+    iteration[edges[i]]=0 #edges[i] is the target edge for this iteration
+    #start on location that absolutely has an edge in remaining edges (first one)
+    k= which(iteration>0)[1] %% length(mstmat[,1]) #row of current iterate
+    j= which(iteration>0)[1] %/% length(mstmat[,1]) +1
+    #list of edges in the two clusters
+    while(sum(k,j)>0){ #first stopping condition is we have run out of connected nodes
+      #the second stopping condition is all elements are in the same cluster
+      if(sum(iteration)<=0){
+        break
+      }
+      #get current k,j values and add to cluster
+      rows <- which(iteration[k,]>0) #get next rows (current for pulling values)
+      cols <- which(iteration[,j]>0) #get next columns (current for pulling values)
+      #add k,j values to cluster
+      cluster1 <- c(cluster1, iteration[k,rows], iteration[cols,j]) #get values in same col and row
+      #remove connected value from matrix
+      iteration[k,rows] = 0
+      iteration[cols,j] = 0
+      #reset k and j
+      k <- rows
+      print(k)
+      j <- cols
+      print(j)
+    }
+    print(edges[i])
+    cluster2 <- iteration[which(iteration>0)]
+    print("cluster 1")
+    print(cluster1)
+    print("cluster 2")
+    print(cluster2)
+    kval <- ifelse(sum(cluster1)<sum(cluster2), max(cluster1), max(cluster2))
+    clumpy[i] <- 1- kval/jval
+  }
+  print("final vector")
+  print(clumpy)
+  #return(max(clumpy))
 }
 
 #' @export
