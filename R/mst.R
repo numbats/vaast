@@ -112,8 +112,7 @@ sc_clumpy.scree <- function(x, y = NULL) {
   mstmat[upper.tri(mstmat, diag = FALSE)]=0
   edges <- which(mstmat>0)
   clumpy <- rep(0,length(edges))
-  #for(i in seq(length(edges))){
-  for(i in c(1)){
+  for(i in seq(length(edges))){
     #create the matrix we will pull appart to create the two clusters
     iteration <- mstmat
     jval <- iteration[edges[i]]
@@ -126,7 +125,6 @@ sc_clumpy.scree <- function(x, y = NULL) {
     #list of edges in the two clusters
     while(sum(k,j)>0){ #first stopping condition is we have run out of connected nodes
       #the second stopping condition is all elements are in the same cluster
-      print(iteration)
       if(sum(iteration)<=0){
         break
       }
@@ -139,9 +137,9 @@ sc_clumpy.scree <- function(x, y = NULL) {
       iteration[k,rows] = 0
       iteration[cols,j] = 0
       #reset k and j
-      k <- cols
+      k <- rows
       print(k)
-      j <- rows
+      j <- cols
       print(j)
     }
     print(edges[i])
