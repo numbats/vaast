@@ -102,6 +102,14 @@ sc_striated.default <- function(x, y){
 #'   sc_clumpy(anscombe$x3, anscombe$y3)
 #'   sc_clumpy(anscombe$x4, anscombe$y4)
 #'
+#'   ggplot(datasaurus_dozen, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~dataset, ncol=3, scales = "free")
+#'   sc_clumpy(datasaurus_dozen_wide$away_x, datasaurus_dozen_wide$away_y)
+#'   sc_clumpy(datasaurus_dozen_wide$dino_x, datasaurus_dozen_wide$dino_y)
+#'   sc_clumpy(datasaurus_dozen_wide$dots_x, datasaurus_dozen_wide$dots_y)
+#'   sc_clumpy(datasaurus_dozen_wide$h_lines_x, datasaurus_dozen_wide$h_lines_y)
+#'
 #' @export
 sc_clumpy <- function(x, y) UseMethod("sc_clumpy")
 
@@ -110,50 +118,37 @@ sc_clumpy.scree <- function(x, y = NULL) {
   mymst <- gen_mst(x$del, x$weights)
   mstmat <- matrix(mymst[], nrow=11)
   mstmat[upper.tri(mstmat, diag = FALSE)]=0
+  #get cols and rows of each value
   edges <- which(mstmat>0)
+  rows <- edges %% length(mstmat[,1])
+  cols <- (edges-1) %/% length(mstmat[,1]) +1
   clumpy <- rep(0,length(edges))
   for(i in seq(length(edges))){
-    #create the matrix we will pull appart to create the two clusters
-    iteration <- mstmat
-    jval <- iteration[edges[i]]
-    #intialise cluster and remove target value
-    cluster1 <- NULL
-    iteration[edges[i]]=0 #edges[i] is the target edge for this iteration
-    #start on location that absolutely has an edge in remaining edges (first one)
-    k= which(iteration>0)[1] %% length(mstmat[,1]) #row of current iterate
-    j= which(iteration>0)[1] %/% length(mstmat[,1]) +1
-    #list of edges in the two clusters
-    while(sum(k,j)>0){ #first stopping condition is we have run out of connected nodes
-      #the second stopping condition is all elements are in the same cluster
-      if(sum(iteration)<=0){
-        break
+    #set value for edge in consideration
+    jval <- mstmat[edges[i]]
+    #reset inner loop values and remove target edge
+    inedges <- edges[-i]
+    inrows <- rows[-i]
+    incols <- cols[-i]
+    #make cluster with remaining edges (this second for loop is bad computationally oof)
+    for(j in seq(length(inedges))){
+      if(j==1){
+        ind=1
       }
-      #get current k,j values and add to cluster
-      rows <- which(iteration[k,]>0) #get next rows (current for pulling values)
-      cols <- which(iteration[,j]>0) #get next columns (current for pulling values)
-      #add k,j values to cluster
-      cluster1 <- c(cluster1, iteration[k,rows], iteration[cols,j]) #get values in same col and row
-      #remove connected value from matrix
-      iteration[k,rows] = 0
-      iteration[cols,j] = 0
-      #reset k and j
-      k <- rows
-      print(k)
-      j <- cols
-      print(j)
+      checkvec <- c(inrows[ind],incols[ind]) #lower triang matrix so need to check rows and cols
+      if((inrows[j]%in%checkvec | incols[j]%in%checkvec)& (j!=1)){
+        ind <- c(ind,j)
+      }
     }
-    print(edges[i])
-    cluster2 <- iteration[which(iteration>0)]
-    print("cluster 1")
-    print(cluster1)
-    print("cluster 2")
-    print(cluster2)
-    kval <- ifelse(sum(cluster1)<sum(cluster2), max(cluster1), max(cluster2))
-    clumpy[i] <- 1- kval/jval
+    cluster1 <- mstmat[inedges[ind]]
+    cluster2 <- mstmat[inedges[-ind]]
+    kval <- ifelse(sum(cluster1)<sum(cluster2), pmax(cluster1), pmax(cluster2))
+    print(kval)
+    print(jval)
+    clumpy[i] <- 1- (kval/jval)
   }
-  print("final vector")
   print(clumpy)
-  #return(max(clumpy))
+  return(pmax(clumpy))
 }
 
 #' @export
