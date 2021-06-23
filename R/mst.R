@@ -116,7 +116,7 @@ sc_clumpy <- function(x, y) UseMethod("sc_clumpy")
 #' @export
 sc_clumpy.scree <- function(x, y = NULL) {
   mymst <- gen_mst(x$del, x$weights)
-  mstmat <- matrix(mymst[], nrow=11)
+  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   mstmat[upper.tri(mstmat, diag = FALSE)]=0
   #get cols and rows of each value
   edges <- which(mstmat>0)
@@ -143,12 +143,10 @@ sc_clumpy.scree <- function(x, y = NULL) {
     cluster1 <- mstmat[inedges[ind]]
     cluster2 <- mstmat[inedges[-ind]]
     kval <- ifelse(sum(cluster1)<sum(cluster2), pmax(cluster1), pmax(cluster2))
-    print(kval)
-    print(jval)
     clumpy[i] <- 1- (kval/jval)
   }
-  print(clumpy)
-  return(pmax(clumpy))
+  clumpy <- clumpy[which(!is.na(clumpy))]
+  return(max(clumpy))
 }
 
 #' @export
