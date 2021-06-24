@@ -262,3 +262,63 @@ sc_skewed.default <- function(x, y){
   sc <- scree(x, y)
   sc_skewed.scree(sc)
 }
+
+
+#' Compute outlying scagnostic measure using MST
+#'
+#' @examples
+#'   require(ggplot2)
+#'   require(tidyr)
+#'   require(dplyr)
+#'   data(anscombe_tidy)
+#'   ggplot(anscombe_tidy, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~set, ncol=2, scales = "free")
+#'   sc_outlying(anscombe$x1, anscombe$y1)
+#'   sc_outlying(anscombe$x2, anscombe$y2)
+#'   sc_outlying(anscombe$x3, anscombe$y3)
+#'   sc_outlying(anscombe$x4, anscombe$y4)
+#'   ggplot(datasaurus_dozen, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~dataset, ncol=3, scales = "free")
+#'   sc_outlying(datasaurus_dozen_wide$away_x, datasaurus_dozen_wide$away_y)
+#'   sc_outlying(datasaurus_dozen_wide$bullseye_x, datasaurus_dozen_wide$bullseye_y)
+#'   sc_outlying(datasaurus_dozen_wide$circle_x, datasaurus_dozen_wide$circle_y)
+#'   sc_outlying(datasaurus_dozen_wide$dino_x, datasaurus_dozen_wide$dino_y)
+#'   sc_outlying(datasaurus_dozen_wide$dots_x, datasaurus_dozen_wide$dots_y)
+#'   sc_outlying(datasaurus_dozen_wide$h_lines_x, datasaurus_dozen_wide$h_lines_y)
+#'   sc_outlying(datasaurus_dozen_wide$high_lines_x, datasaurus_dozen_wide$high_lines_y)
+#'   sc_outlying(datasaurus_dozen_wide$slant_down_x, datasaurus_dozen_wide$slant_up_y)
+#'   sc_outlying(datasaurus_dozen_wide$star_x, datasaurus_dozen_wide$star_y)
+#'   sc_outlying(datasaurus_dozen_wide$v_lines_x, datasaurus_dozen_wide$v_lines_y)
+#'   sc_outlying(datasaurus_dozen_wide$wide_lines_x, datasaurus_dozen_wide$wide_lines_y)
+#'   sc_outlying(datasaurus_dozen_wide$x_shape_x, datasaurus_dozen_wide$x_shape_y)
+#'
+#' @export
+sc_outlying <- function(x, y) UseMethod("sc_outlying")
+
+#' @export
+sc_outlying.scree <- function(x, y = NULL) {
+  #generate vector of MST edges
+  mymst <- gen_mst(x$del, x$weights)
+  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
+  edges <- sort(mstmat[which(mstmat>0)])
+  #calculate comparison value
+  q25 <- edges[floor(0.25*length(edges))]
+  q75 <- edges[floor(0.75*length(edges))]
+  w <- q75 + 1.5*(q75-q25)
+  #find outlying edges
+  rowsum <- mstmat%*%rep(1, length(mstmat[1,])) #row sum of matrix
+  outedge <- rowsum>w
+  #calculate numerator
+  #mstmat[upper.tri(mstmat, diag = FALSE)]=0
+  #calculate denominator
+
+  return(outlying)
+}
+
+#' @export
+sc_outlying.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_outlying.scree(sc)
+}
