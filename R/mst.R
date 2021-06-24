@@ -155,3 +155,47 @@ sc_clumpy.default <- function(x, y){
   sc_clumpy.scree(sc)
 }
 
+
+
+#' Compute sparse scagnostic measure using MST
+#'
+#' @examples
+#'   require(ggplot2)
+#'   require(tidyr)
+#'   require(dplyr)
+#'   data(anscombe_tidy)
+#'   ggplot(anscombe_tidy, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~set, ncol=2, scales = "free")
+#'   sc_sparse(anscombe$x1, anscombe$y1)
+#'   sc_sparse(anscombe$x2, anscombe$y2)
+#'   sc_sparse(anscombe$x3, anscombe$y3)
+#'   sc_sparse(anscombe$x4, anscombe$y4)
+#'   ggplot(datasaurus_dozen, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~dataset, ncol=3, scales = "free")
+#'   sc_sparse(datasaurus_dozen_wide$away_x, datasaurus_dozen_wide$away_y)
+#'   sc_sparse(datasaurus_dozen_wide$dino_x, datasaurus_dozen_wide$dino_y)
+#'   sc_sparse(datasaurus_dozen_wide$dots_x, datasaurus_dozen_wide$dots_y)
+#'   sc_sparse(datasaurus_dozen_wide$h_lines_x, datasaurus_dozen_wide$h_lines_y)
+#'
+#' @export
+sc_sparse <- function(x, y) UseMethod("sc_sparse")
+
+#' @export
+sc_sparse.scree <- function(x, y = NULL) {
+  #generate vector of MST edges
+  mymst <- gen_mst(x$del, x$weights)
+  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
+  mstmat[upper.tri(mstmat, diag = FALSE)]=0
+  edges <- sort(mstmat[which(mstmat>0)], decreasing=TRUE)
+  #calculate sparse value
+  sparse <- edges[floor(0.9*length(edges))]
+  return(sparse)
+}
+
+#' @export
+sc_sparse.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_sparse.scree(sc)
+}
