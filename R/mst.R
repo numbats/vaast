@@ -175,9 +175,17 @@ sc_clumpy.default <- function(x, y){
 #'     geom_point() +
 #'     facet_wrap(~dataset, ncol=3, scales = "free")
 #'   sc_sparse(datasaurus_dozen_wide$away_x, datasaurus_dozen_wide$away_y)
+#'   sc_sparse(datasaurus_dozen_wide$bullseye_x, datasaurus_dozen_wide$bullseye_y)
+#'   sc_sparse(datasaurus_dozen_wide$circle_x, datasaurus_dozen_wide$circle_y)
 #'   sc_sparse(datasaurus_dozen_wide$dino_x, datasaurus_dozen_wide$dino_y)
 #'   sc_sparse(datasaurus_dozen_wide$dots_x, datasaurus_dozen_wide$dots_y)
 #'   sc_sparse(datasaurus_dozen_wide$h_lines_x, datasaurus_dozen_wide$h_lines_y)
+#'   sc_sparse(datasaurus_dozen_wide$high_lines_x, datasaurus_dozen_wide$high_lines_y)
+#'   sc_sparse(datasaurus_dozen_wide$slant_down_x, datasaurus_dozen_wide$slant_up_y)
+#'   sc_sparse(datasaurus_dozen_wide$star_x, datasaurus_dozen_wide$star_y)
+#'   sc_sparse(datasaurus_dozen_wide$v_lines_x, datasaurus_dozen_wide$v_lines_y)
+#'   sc_sparse(datasaurus_dozen_wide$wide_lines_x, datasaurus_dozen_wide$wide_lines_y)
+#'   sc_sparse(datasaurus_dozen_wide$x_shape_x, datasaurus_dozen_wide$x_shape_y)
 #'
 #' @export
 sc_sparse <- function(x, y) UseMethod("sc_sparse")
@@ -188,7 +196,7 @@ sc_sparse.scree <- function(x, y = NULL) {
   mymst <- gen_mst(x$del, x$weights)
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   mstmat[upper.tri(mstmat, diag = FALSE)]=0
-  edges <- sort(mstmat[which(mstmat>0)], decreasing=TRUE)
+  edges <- sort(mstmat[which(mstmat>0)])
   #calculate sparse value
   sparse <- edges[floor(0.9*length(edges))]
   return(sparse)
@@ -198,4 +206,59 @@ sc_sparse.scree <- function(x, y = NULL) {
 sc_sparse.default <- function(x, y){
   sc <- scree(x, y)
   sc_sparse.scree(sc)
+}
+
+
+#' Compute skewed scagnostic measure using MST
+#'
+#' @examples
+#'   require(ggplot2)
+#'   require(tidyr)
+#'   require(dplyr)
+#'   data(anscombe_tidy)
+#'   ggplot(anscombe_tidy, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~set, ncol=2, scales = "free")
+#'   sc_skewed(anscombe$x1, anscombe$y1)
+#'   sc_skewed(anscombe$x2, anscombe$y2)
+#'   sc_skewed(anscombe$x3, anscombe$y3)
+#'   sc_skewed(anscombe$x4, anscombe$y4)
+#'   ggplot(datasaurus_dozen, aes(x=x, y=y)) +
+#'     geom_point() +
+#'     facet_wrap(~dataset, ncol=3, scales = "free")
+#'   sc_skewed(datasaurus_dozen_wide$away_x, datasaurus_dozen_wide$away_y)
+#'   sc_skewed(datasaurus_dozen_wide$bullseye_x, datasaurus_dozen_wide$bullseye_y)
+#'   sc_skewed(datasaurus_dozen_wide$circle_x, datasaurus_dozen_wide$circle_y)
+#'   sc_skewed(datasaurus_dozen_wide$dino_x, datasaurus_dozen_wide$dino_y)
+#'   sc_skewed(datasaurus_dozen_wide$dots_x, datasaurus_dozen_wide$dots_y)
+#'   sc_skewed(datasaurus_dozen_wide$h_lines_x, datasaurus_dozen_wide$h_lines_y)
+#'   sc_skewed(datasaurus_dozen_wide$high_lines_x, datasaurus_dozen_wide$high_lines_y)
+#'   sc_skewed(datasaurus_dozen_wide$slant_down_x, datasaurus_dozen_wide$slant_up_y)
+#'   sc_skewed(datasaurus_dozen_wide$star_x, datasaurus_dozen_wide$star_y)
+#'   sc_skewed(datasaurus_dozen_wide$v_lines_x, datasaurus_dozen_wide$v_lines_y)
+#'   sc_skewed(datasaurus_dozen_wide$wide_lines_x, datasaurus_dozen_wide$wide_lines_y)
+#'   sc_skewed(datasaurus_dozen_wide$x_shape_x, datasaurus_dozen_wide$x_shape_y)
+#'
+#' @export
+sc_skewed <- function(x, y) UseMethod("sc_skewed")
+
+#' @export
+sc_skewed.scree <- function(x, y = NULL) {
+  #generate vector of MST edges
+  mymst <- gen_mst(x$del, x$weights)
+  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
+  mstmat[upper.tri(mstmat, diag = FALSE)]=0
+  edges <- sort(mstmat[which(mstmat>0)])
+  #calculate skewed value
+  q90 <- edges[floor(0.9*length(edges))]
+  q50 <- edges[floor(0.5*length(edges))]
+  q10 <- edges[floor(0.1*length(edges))]
+  skewed <- (q90-q50)/(q90/q50) #no size adjustment
+  return(skewed)
+}
+
+#' @export
+sc_skewed.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_skewed.scree(sc)
 }
