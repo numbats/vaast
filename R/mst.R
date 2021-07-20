@@ -302,17 +302,24 @@ sc_outlying.scree <- function(x, y = NULL) {
   #generate vector of MST edges
   mymst <- gen_mst(x$del, x$weights)
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
-  edges <- sort(mstmat[which(mstmat>0)])
-  #calculate comparison value
+
+  #calculate w value
+  mstmat_diag <- mstmat
+  mstmat_diag[upper.tri(mstmat, diag = FALSE)]=0
+  edges <- sort(mstmat_diag[which(mstmat>0)])
   q25 <- edges[floor(0.25*length(edges))]
   q75 <- edges[floor(0.75*length(edges))]
   w <- q75 + 1.5*(q75-q25)
-  #find outlying edges
-  rowsum <- mstmat%*%rep(1, length(mstmat[1,])) #row sum of matrix
-  outedge <- rowsum>w
-  #calculate numerator
-  #mstmat[upper.tri(mstmat, diag = FALSE)]=0
-  #calculate denominator
+
+  #set values above w to 0 in matrix to find outlying
+  mstmat_check <- mstmat
+  mstmat_check[mstmat>w]=0
+  rowsum <- mstmat_check%*%rep(1, length(mstmat_check[1,])) #row sum of matrix, if 0 all edges are above this value
+
+  #calculate outlying value
+  numer <- sum(mstmat[which(rowsum==0),]) #sum of edges of outlying points
+  denom <- sum(mstmat)
+  outlying <- numer/denom
 
   return(outlying)
 }
