@@ -1,0 +1,11 @@
+timeseries_id,timestamp_created,source,category,contributor,name,description,sampling_unit,sampling_rate
+00a95a85-3871-11e8-8680-0242ac120002,"2018-04-05 01:31:02","Ben music snippets",Music,,MUS_One_for_Daddy-O_3.1s_F6_b8,,,
+01973f53-3876-11e8-8680-0242ac120002,"2018-04-05 02:06:51","Ben music downsampled",Music,,MUS_Small_Wooden_Boats_510s_F0.05_b8,,,
+0266c47f-3875-11e8-8680-0242ac120002,"2018-04-05 01:59:43","Ben music downsampled",Music,,MUS_Gobbledigook_444s_F0.05_b8,,,
+031e8564-3883-11e8-8680-0242ac120002,"2018-04-05 03:39:57","Ben music snippets",Music,,MUS_Nicky_Nacky_Nocky_Noo_2.1s_F8_b8,,,
+03a9bf28-3874-11e8-8680-0242ac120002,"2018-04-05 01:52:36","Ben music downsampled",Music,,MUS_Atonement_932s_F0.03_b8,,,
+03e344d9-3877-11e8-8680-0242ac120002,"2018-04-05 02:14:05","Ben music downsampled",Music,,MUS_midgets_799s_F0.03_b8,,,
+0494cee2-3876-11e8-8680-0242ac120002,"2018-04-05 02:06:56","Ben music downsampled",Music,,MUS_So_Many_Nights_512s_F0.05_b8,,,
+055ed085-3875-11e8-8680-0242ac120002,"2018-04-05 01:59:48","Ben music downsampled",Music,,MUS_Good_To_Go_348s_F0.07_b8,,,
+076e1515-3873-11e8-8680-0242ac120002,"2018-04-05 01:45:33","Ben music snippets",Music,,MUS_Venemo_Para_Las_Hadas_2.5s_F8_b8,,,
+079b33a6-3876-11e8-8680-0242ac120002,"2018-04-05 02:07:01","Ben music downsampled",Music,,MUS_Some_Nights_Are_Long_439s_F0.05_b8,,,
