@@ -18,3 +18,11 @@ calc_scags <- function(x, y scags=NULL){
   original_mst <- gen_mst(x,y)
   #return row of observations
 }
+
+fakefunc <- function(gridrow,origdata){
+  print(origdata[[gridrow]])
+  #calcs <- tibble(total=sum(datax, datay),
+  #        means_x = mean(datax),
+  #        mean_y = mean(datay))
+  #return(calcs)
+}
