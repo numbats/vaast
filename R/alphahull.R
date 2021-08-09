@@ -28,16 +28,24 @@ sc_convex <- function(x, y) UseMethod("sc_convex")
 sc_convex.scree <- function(x,y = NULL) {
   stopifnot(is.null(y))
   chull <- gen_conv_hull(x$del)
-  chull_area <- splancs::areapl(cbind(chull$x, chull$y))
+  #chull_area <- splancs::areapl(cbind(chull$x, chull$y))
   ahull <- gen_alpha_hull(x$del, x$alpha)
-  ahull_area <- alphahull::areaahull(ahull)
-  ahull_area / chull_area
+  #ahull_area <- alphahull::areaahull(ahull)
+  #ahull_area / chull_area
+  sc_convex.hull(chull, ahull)
 }
 
 #' @export
 sc_convex.default <- function(x, y){
   sc <- scree(x, y)
   sc_convex.scree(sc)
+}
+
+#' @export
+sc_convex.hull <- function(chull, ahull){
+  chull_area <- splancs::areapl(cbind(chull$x, chull$y))
+  ahull_area <- alphahull::areaahull(ahull)
+  ahull_area / chull_area
 }
 
 #' Compute convex scagnostic measures
@@ -69,14 +77,21 @@ sc_skinny <- function(x, y) UseMethod("sc_skinny")
 sc_skinny.scree <- function(x, y = NULL) {
   stopifnot(is.null(y))
   ahull <- gen_alpha_hull(x$del, x$alpha)
-  ahull_area <- alphahull::areaahull(ahull)
-  1 - sqrt(4*pi * ahull_area) / ahull$length
+  #ahull_area <- alphahull::areaahull(ahull)
+  #1 - sqrt(4*pi * ahull_area) / ahull$length
+  sc_skinny.hull(ahull)
 }
 
 #' @export
 sc_skinny.default <- function(x, y){
   sc <- scree(x, y)
   sc_skinny.scree(sc)
+}
+
+#' @export
+sc_skinny.hull <- function(ahull){
+  ahull_area <- alphahull::areaahull(ahull)
+  1 - sqrt(4*pi * ahull_area) / ahull$length
 }
 
 gen_conv_hull <- function(del) {
