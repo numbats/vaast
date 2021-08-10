@@ -6,7 +6,15 @@
 sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor"), groups=NULL){
   all_combs <- expand.grid(colnames(all_data),colnames(all_data))%>%
     filter(!(Var1==Var2))
-  all_combs <- cbind(all_combs, t(apply(all_combs, 1, intermediate_scags, data=all_data, scags=scags)))
+  #get rid of reversed duplicates
+  all_combs <- all_combs[!duplicated(apply(all_combs,1,function(x) paste(sort(x),collapse=''))),]
+  if(length(scags)==1){
+    all_combs <- cbind(all_combs, apply(all_combs, 1, intermediate_scags, data=all_data, scags=scags))
+  }
+  else{
+    all_combs <- cbind(all_combs, t(apply(all_combs, 1, intermediate_scags, data=all_data, scags=scags)))
+  }
+  #all_combs <- cbind(all_combs, t(apply(all_combs, 1, intermediate_scags, data=all_data, scags=scags)))
   scags_name <- c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor")
   scags_name <- scags_name[which(scags_name %in% scags)]
   colnames(all_combs) <- c("Var1", "Var2", scags_name)
@@ -49,8 +57,19 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
   #original_mst <- gen_mst(x,y)
   #should we calculate new MST?
 
-  #CALCULATE ALPHA HULL MEASURES
+  #CALC SCREE
   sc <- scree(x, y)
+
+  #CALCULATE MST MEASURES
+  mst <- gen_mst(sc$del, sc$weights)
+  if("stringy" %in% scags){
+    stringy <- sc_stringy.mst(mst)
+  }
+  if("striated" %in% scags){
+    striated <- sc_striated.mst(mst, sc)
+  }
+
+  #CALCULATE ALPHA HULL MEASURES
   chull <- gen_conv_hull(sc$del)
   ahull <- gen_alpha_hull(sc$del, sc$alpha)
   if("convex" %in% scags){
@@ -59,6 +78,7 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
   if("skinny" %in% scags){
     skinny <- sc_skinny.hull(ahull)
   }
+
   #CALCULATE ASSOCIATION MEASURES
   if("monotonic" %in% scags){
     monotonic <- sc_monotonic(x,y)

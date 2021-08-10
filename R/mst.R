@@ -21,8 +21,9 @@ sc_stringy <- function(x, y) UseMethod("sc_stringy")
 sc_stringy.scree <- function(x, y = NULL) {
   stopifnot(is.null(y))
   mst <- gen_mst(x$del, x$weights)
-  vertex_counts <- igraph::degree(mst)
-  sum(vertex_counts == 2) / (length(vertex_counts) - sum(vertex_counts == 1))
+  #vertex_counts <- igraph::degree(mst)
+  #sum(vertex_counts == 2) / (length(vertex_counts) - sum(vertex_counts == 1))
+  sc_stringy.mst(mst)
 }
 
 #' @export
@@ -31,11 +32,10 @@ sc_stringy.default <- function(x, y){
   sc_stringy.scree(sc)
 }
 
-gen_mst <- function(del, weights) {
-  edges <- del$mesh[, c("ind1", "ind2")]
-  graph <- igraph::graph_from_edgelist(edges, directed = FALSE)
-  graph <- igraph::set_edge_attr(graph, "weight", value = weights)
-  igraph::mst(graph, weights =  igraph::E(graph)$weight)
+#' @export
+sc_stringy.mst <- function(mst){
+  vertex_counts <- igraph::degree(mst)
+  sum(vertex_counts == 2) / (length(vertex_counts) - sum(vertex_counts == 1))
 }
 
 #' Compute stirated scagnostic measure using MST
@@ -67,6 +67,30 @@ sc_striated <- function(x, y) UseMethod("sc_striated")
 #' @export
 sc_striated.scree <- function(x, y = NULL) {
   mst <- gen_mst(x$del, x$weights)
+  #vertex_counts <- igraph::degree(mst)
+  #angs <- which(vertex_counts==2)
+  #angles_vect <- numeric(length(angs))
+  #for(i in seq_len(length(angs))){
+  #  adjs <- which(mst[angs[i]]>0)
+  #  points <- x$del$x[adjs,]
+  #  origin <- x$del$x[angs[i],]
+  #  vects <- t(t(points)-origin)
+  #  angles_vect[i] <- (vects[1,]%*%vects[2,])/(prod(mst[angs[i]][adjs]))
+  #}
+  #striated <- (sum(ifelse(angles_vect<(-0.75),1,0)))/length(vertex_counts)
+  #return(striated)
+  sc_striated.mst(mst, x)
+
+  }
+
+#' @export
+sc_striated.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_striated.scree(sc)
+}
+
+#' @export
+sc_striated.mst <- function(mst, x){
   vertex_counts <- igraph::degree(mst)
   angs <- which(vertex_counts==2)
   angles_vect <- numeric(length(angs))
@@ -77,14 +101,7 @@ sc_striated.scree <- function(x, y = NULL) {
     vects <- t(t(points)-origin)
     angles_vect[i] <- (vects[1,]%*%vects[2,])/(prod(mst[angs[i]][adjs]))
   }
-  striated <- (sum(ifelse(angles_vect<(-0.75),1,0)))/length(vertex_counts)
-  return(striated)
-  }
-
-#' @export
-sc_striated.default <- function(x, y){
-  sc <- scree(x, y)
-  sc_striated.scree(sc)
+  (sum(ifelse(angles_vect<(-0.75),1,0)))/length(vertex_counts)
 }
 
 #' Compute clumpy scagnostic measure using MST
@@ -328,4 +345,11 @@ sc_outlying.scree <- function(x, y = NULL) {
 sc_outlying.default <- function(x, y){
   sc <- scree(x, y)
   sc_outlying.scree(sc)
+}
+
+gen_mst <- function(del, weights) {
+  edges <- del$mesh[, c("ind1", "ind2")]
+  graph <- igraph::graph_from_edgelist(edges, directed = FALSE)
+  graph <- igraph::set_edge_attr(graph, "weight", value = weights)
+  igraph::mst(graph, weights =  igraph::E(graph)$weight)
 }
