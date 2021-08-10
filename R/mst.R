@@ -133,6 +133,17 @@ sc_clumpy <- function(x, y) UseMethod("sc_clumpy")
 #' @export
 sc_clumpy.scree <- function(x, y = NULL) {
   mymst <- gen_mst(x$del, x$weights)
+  sc_clumpy.mst(mymst,x)
+}
+
+#' @export
+sc_clumpy.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_clumpy.scree(sc)
+}
+
+#' @export
+sc_clumpy.mst <- function(mymst, x){
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   mstmat[upper.tri(mstmat, diag = FALSE)]=0
   #get cols and rows of each value
@@ -163,13 +174,8 @@ sc_clumpy.scree <- function(x, y = NULL) {
     clumpy[i] <- 1- (kval/jval)
   }
   clumpy <- clumpy[which(!is.na(clumpy))]
-  return(max(clumpy))
-}
+  max(clumpy)
 
-#' @export
-sc_clumpy.default <- function(x, y){
-  sc <- scree(x, y)
-  sc_clumpy.scree(sc)
 }
 
 
@@ -211,18 +217,21 @@ sc_sparse <- function(x, y) UseMethod("sc_sparse")
 sc_sparse.scree <- function(x, y = NULL) {
   #generate vector of MST edges
   mymst <- gen_mst(x$del, x$weights)
-  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
-  mstmat[upper.tri(mstmat, diag = FALSE)]=0
-  edges <- sort(mstmat[which(mstmat>0)])
-  #calculate sparse value
-  sparse <- edges[floor(0.9*length(edges))]
-  return(sparse)
+  sc_sparse.mst(mymst,x)
 }
 
 #' @export
 sc_sparse.default <- function(x, y){
   sc <- scree(x, y)
   sc_sparse.scree(sc)
+}
+#' @export
+sc_sparse.mst <- function(mymst, x){
+  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
+  mstmat[upper.tri(mstmat, diag = FALSE)]=0
+  edges <- sort(mstmat[which(mstmat>0)])
+  #calculate sparse value
+  edges[floor(0.9*length(edges))]
 }
 
 
@@ -263,6 +272,17 @@ sc_skewed <- function(x, y) UseMethod("sc_skewed")
 sc_skewed.scree <- function(x, y = NULL) {
   #generate vector of MST edges
   mymst <- gen_mst(x$del, x$weights)
+  sc_skewed.mst(mymst, x)
+}
+
+#' @export
+sc_skewed.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_skewed.scree(sc)
+}
+
+#' @export
+sc_skewed.mst <- function(mymst, x){
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   mstmat[upper.tri(mstmat, diag = FALSE)]=0
   edges <- sort(mstmat[which(mstmat>0)])
@@ -270,14 +290,7 @@ sc_skewed.scree <- function(x, y = NULL) {
   q90 <- edges[floor(0.9*length(edges))]
   q50 <- edges[floor(0.5*length(edges))]
   q10 <- edges[floor(0.1*length(edges))]
-  skewed <- (q90-q50)/(q90/q50) #no size adjustment
-  return(skewed)
-}
-
-#' @export
-sc_skewed.default <- function(x, y){
-  sc <- scree(x, y)
-  sc_skewed.scree(sc)
+  (q90-q50)/(q90/q50) #no size adjustment
 }
 
 
@@ -318,8 +331,18 @@ sc_outlying <- function(x, y) UseMethod("sc_outlying")
 sc_outlying.scree <- function(x, y = NULL) {
   #generate vector of MST edges
   mymst <- gen_mst(x$del, x$weights)
-  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
+  sc_outlying.mst(mymst, x)
+}
 
+#' @export
+sc_outlying.default <- function(x, y){
+  sc <- scree(x, y)
+  sc_outlying.scree(sc)
+}
+
+#' @export
+sc_outlying.mst <- function(mymst, x){
+  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   #calculate w value
   mstmat_diag <- mstmat
   mstmat_diag[upper.tri(mstmat, diag = FALSE)]=0
@@ -336,15 +359,7 @@ sc_outlying.scree <- function(x, y = NULL) {
   #calculate outlying value
   numer <- sum(mstmat[which(rowsum==0),]) #sum of edges of outlying points
   denom <- sum(mstmat)
-  outlying <- numer/denom
-
-  return(outlying)
-}
-
-#' @export
-sc_outlying.default <- function(x, y){
-  sc <- scree(x, y)
-  sc_outlying.scree(sc)
+  numer/denom
 }
 
 gen_mst <- function(del, weights) {

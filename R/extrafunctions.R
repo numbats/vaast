@@ -9,22 +9,17 @@ sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clu
   #get rid of reversed duplicates
   all_combs <- all_combs[!duplicated(apply(all_combs,1,function(x) paste(sort(x),collapse=''))),]
   if(length(scags)==1){
-    all_combs <- cbind(all_combs, apply(all_combs, 1, intermediate_scags, data=all_data, scags=scags))
+    all_combs <- cbind(all_combs, apply(all_combs, 1, vaast:::intermediate_scags, data=all_data, scags=scags))
   }
   else{
-    all_combs <- cbind(all_combs, t(apply(all_combs, 1, intermediate_scags, data=all_data, scags=scags)))
+    all_combs <- cbind(all_combs, t(apply(all_combs, 1, vaast:::intermediate_scags, data=all_data, scags=scags)))
   }
-  #all_combs <- cbind(all_combs, t(apply(all_combs, 1, intermediate_scags, data=all_data, scags=scags)))
   scags_name <- c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor")
   scags_name <- scags_name[which(scags_name %in% scags)]
   colnames(all_combs) <- c("Var1", "Var2", scags_name)
   return(all_combs)
   }
 
-#' Intermediate function to use apply on to calculate scagnostics
-#'
-#'
-#' @export
 intermediate_scags <- function(vars, data, scags){
   #fakefunc <- function(vars, data){sc_convex(pull(data, var=vars[[1]]), pull(data, var=vars[[2]]))}
   x <- pull(data, var=vars[[1]])
@@ -68,7 +63,19 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
   if("striated" %in% scags){
     striated <- sc_striated.mst(mst, sc)
   }
+  if("clumpy" %in% scags){
+    clumpy <- sc_clumpy.mst(mst, sc)
+  }
+  if("sparse" %in% scags){
+    sparse <- sc_sparse.mst(mst, sc)
+  }
+  if("skewed" %in% scags){
+    skewed <- sc_skewed.mst(mst, sc)
 
+  }
+  if("outlying" %in% scags){
+    outlying <- sc_outlying.mst(mst, sc)
+  }
   #CALCULATE ALPHA HULL MEASURES
   chull <- gen_conv_hull(sc$del)
   ahull <- gen_alpha_hull(sc$del, sc$alpha)

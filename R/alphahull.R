@@ -41,6 +41,7 @@ sc_convex.default <- function(x, y){
   sc_convex.scree(sc)
 }
 
+#' @rdname sc_convex
 #' @export
 sc_convex.hull <- function(chull, ahull){
   chull_area <- splancs::areapl(cbind(chull$x, chull$y))
