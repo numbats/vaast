@@ -43,7 +43,7 @@ sc_convex.default <- function(x, y){
 
 #' @rdname sc_convex
 #' @export
-sc_convex.hull <- function(chull, ahull){
+sc_convex.ahull <- function(chull, ahull){
   chull_area <- splancs::areapl(cbind(chull$x, chull$y))
   ahull_area <- alphahull::areaahull(ahull)
   ahull_area / chull_area
@@ -90,7 +90,7 @@ sc_skinny.default <- function(x, y){
 }
 
 #' @export
-sc_skinny.hull <- function(ahull){
+sc_skinny.ahull <- function(ahull){
   ahull_area <- alphahull::areaahull(ahull)
   1 - sqrt(4*pi * ahull_area) / ahull$length
 }

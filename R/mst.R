@@ -33,7 +33,7 @@ sc_stringy.default <- function(x, y){
 }
 
 #' @export
-sc_stringy.mst <- function(mst){
+sc_stringy.igraph <- function(mst){
   vertex_counts <- igraph::degree(mst)
   sum(vertex_counts == 2) / (length(vertex_counts) - sum(vertex_counts == 1))
 }
@@ -90,7 +90,7 @@ sc_striated.default <- function(x, y){
 }
 
 #' @export
-sc_striated.mst <- function(mst, x){
+sc_striated.igraph <- function(mst, x){
   vertex_counts <- igraph::degree(mst)
   angs <- which(vertex_counts==2)
   angles_vect <- numeric(length(angs))
@@ -143,7 +143,7 @@ sc_clumpy.default <- function(x, y){
 }
 
 #' @export
-sc_clumpy.mst <- function(mymst, x){
+sc_clumpy.igraph <- function(mymst, x){
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   mstmat[upper.tri(mstmat, diag = FALSE)]=0
   #get cols and rows of each value
@@ -226,7 +226,7 @@ sc_sparse.default <- function(x, y){
   sc_sparse.scree(sc)
 }
 #' @export
-sc_sparse.mst <- function(mymst, x){
+sc_sparse.igraph <- function(mymst, x){
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   mstmat[upper.tri(mstmat, diag = FALSE)]=0
   edges <- sort(mstmat[which(mstmat>0)])
@@ -282,7 +282,7 @@ sc_skewed.default <- function(x, y){
 }
 
 #' @export
-sc_skewed.mst <- function(mymst, x){
+sc_skewed.igraph <- function(mymst, x){
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   mstmat[upper.tri(mstmat, diag = FALSE)]=0
   edges <- sort(mstmat[which(mstmat>0)])
@@ -341,7 +341,7 @@ sc_outlying.default <- function(x, y){
 }
 
 #' @export
-sc_outlying.mst <- function(mymst, x){
+sc_outlying.igraph <- function(mymst, x){
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   #calculate w value
   mstmat_diag <- mstmat
