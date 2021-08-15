@@ -58,32 +58,32 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
   #CALCULATE MST MEASURES
   mst <- gen_mst(sc$del, sc$weights)
   if("stringy" %in% scags){
-    stringy <- sc_stringy.mst(mst)
+    stringy <- sc_stringy.igraph(mst)
   }
   if("striated" %in% scags){
-    striated <- sc_striated.mst(mst, sc)
+    striated <- sc_striated.igraph(mst, sc)
   }
   if("clumpy" %in% scags){
-    clumpy <- sc_clumpy.mst(mst, sc)
+    clumpy <- sc_clumpy.igraph(mst, sc)
   }
   if("sparse" %in% scags){
-    sparse <- sc_sparse.mst(mst, sc)
+    sparse <- sc_sparse.igraph(mst, sc)
   }
   if("skewed" %in% scags){
-    skewed <- sc_skewed.mst(mst, sc)
+    skewed <- sc_skewed.igraph(mst, sc)
 
   }
   if("outlying" %in% scags){
-    outlying <- sc_outlying.mst(mst, sc)
+    outlying <- sc_outlying.igraph(mst, sc)
   }
   #CALCULATE ALPHA HULL MEASURES
   chull <- gen_conv_hull(sc$del)
   ahull <- gen_alpha_hull(sc$del, sc$alpha)
   if("convex" %in% scags){
-    convex <- sc_convex.hull(chull,ahull)
+    convex <- sc_convex.ahull(chull,ahull)
   }
   if("skinny" %in% scags){
-    skinny <- sc_skinny.hull(ahull)
+    skinny <- sc_skinny.ahull(ahull)
   }
 
   #CALCULATE ASSOCIATION MEASURES

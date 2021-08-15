@@ -17,21 +17,22 @@
 #' @export
 sc_stringy <- function(x, y) UseMethod("sc_stringy")
 
+#' @rdname sc_stringy
 #' @export
 sc_stringy.scree <- function(x, y = NULL) {
   stopifnot(is.null(y))
   mst <- gen_mst(x$del, x$weights)
-  #vertex_counts <- igraph::degree(mst)
-  #sum(vertex_counts == 2) / (length(vertex_counts) - sum(vertex_counts == 1))
-  sc_stringy.mst(mst)
+  sc_stringy.igraph(mst)
 }
 
+#' @rdname sc_stringy
 #' @export
 sc_stringy.default <- function(x, y){
   sc <- scree(x, y)
   sc_stringy.scree(sc)
 }
 
+#' @rdname sc_stringy
 #' @export
 sc_stringy.igraph <- function(mst){
   vertex_counts <- igraph::degree(mst)
@@ -64,31 +65,22 @@ sc_stringy.igraph <- function(mst){
 #' @export
 sc_striated <- function(x, y) UseMethod("sc_striated")
 
+#' @rdname sc_striated
 #' @export
 sc_striated.scree <- function(x, y = NULL) {
   mst <- gen_mst(x$del, x$weights)
-  #vertex_counts <- igraph::degree(mst)
-  #angs <- which(vertex_counts==2)
-  #angles_vect <- numeric(length(angs))
-  #for(i in seq_len(length(angs))){
-  #  adjs <- which(mst[angs[i]]>0)
-  #  points <- x$del$x[adjs,]
-  #  origin <- x$del$x[angs[i],]
-  #  vects <- t(t(points)-origin)
-  #  angles_vect[i] <- (vects[1,]%*%vects[2,])/(prod(mst[angs[i]][adjs]))
-  #}
-  #striated <- (sum(ifelse(angles_vect<(-0.75),1,0)))/length(vertex_counts)
-  #return(striated)
-  sc_striated.mst(mst, x)
+  sc_striated.igraph(mst, x)
 
   }
 
+#' @rdname sc_striated
 #' @export
 sc_striated.default <- function(x, y){
   sc <- scree(x, y)
   sc_striated.scree(sc)
 }
 
+#' @rdname sc_striated
 #' @export
 sc_striated.igraph <- function(mst, x){
   vertex_counts <- igraph::degree(mst)
@@ -130,18 +122,21 @@ sc_striated.igraph <- function(mst, x){
 #' @export
 sc_clumpy <- function(x, y) UseMethod("sc_clumpy")
 
+#' @rdname sc_clumpy
 #' @export
 sc_clumpy.scree <- function(x, y = NULL) {
   mymst <- gen_mst(x$del, x$weights)
-  sc_clumpy.mst(mymst,x)
+  sc_clumpy.igraph(mymst,x)
 }
 
+#' @rdname sc_clumpy
 #' @export
 sc_clumpy.default <- function(x, y){
   sc <- scree(x, y)
   sc_clumpy.scree(sc)
 }
 
+#' @rdname sc_clumpy
 #' @export
 sc_clumpy.igraph <- function(mymst, x){
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
@@ -213,18 +208,22 @@ sc_clumpy.igraph <- function(mymst, x){
 #' @export
 sc_sparse <- function(x, y) UseMethod("sc_sparse")
 
+#' @rdname sc_sparse
 #' @export
 sc_sparse.scree <- function(x, y = NULL) {
   #generate vector of MST edges
   mymst <- gen_mst(x$del, x$weights)
-  sc_sparse.mst(mymst,x)
+  sc_sparse.igraph(mymst,x)
 }
 
+#' @rdname sc_sparse
 #' @export
 sc_sparse.default <- function(x, y){
   sc <- scree(x, y)
   sc_sparse.scree(sc)
 }
+
+#' @rdname sc_sparse
 #' @export
 sc_sparse.igraph <- function(mymst, x){
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
@@ -268,19 +267,22 @@ sc_sparse.igraph <- function(mymst, x){
 #' @export
 sc_skewed <- function(x, y) UseMethod("sc_skewed")
 
+#' @rdname sc_skewed
 #' @export
 sc_skewed.scree <- function(x, y = NULL) {
   #generate vector of MST edges
   mymst <- gen_mst(x$del, x$weights)
-  sc_skewed.mst(mymst, x)
+  sc_skewed.igraph(mymst, x)
 }
 
+#' @rdname sc_skewed
 #' @export
 sc_skewed.default <- function(x, y){
   sc <- scree(x, y)
   sc_skewed.scree(sc)
 }
 
+#' @rdname sc_skewed
 #' @export
 sc_skewed.igraph <- function(mymst, x){
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
@@ -327,13 +329,15 @@ sc_skewed.igraph <- function(mymst, x){
 #' @export
 sc_outlying <- function(x, y) UseMethod("sc_outlying")
 
+#' @rdname sc_outlying
 #' @export
 sc_outlying.scree <- function(x, y = NULL) {
   #generate vector of MST edges
   mymst <- gen_mst(x$del, x$weights)
-  sc_outlying.mst(mymst, x)
+  sc_outlying.igraph(mymst, x)
 }
 
+#' @rdname sc_outlying
 #' @export
 sc_outlying.default <- function(x, y){
   sc <- scree(x, y)
