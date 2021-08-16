@@ -101,3 +101,12 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
 }
 
 
+#' Build a SPLOM for the selected scagnostics
+#'
+#' @examples
+#'
+#' @export
+sc_splom <- function(sca_dataset){
+  #GGalley::scatmat(sca_dataset)
+}
+
