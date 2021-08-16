@@ -107,6 +107,6 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
 #'
 #' @export
 sc_splom <- function(sca_dataset){
-  #GGalley::scatmat(sca_dataset)
+  #GGally::scatmat(sca_dataset)
 }
 
