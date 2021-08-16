@@ -18,14 +18,14 @@ sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clu
   scags_name <- scags_name[which(scags_name %in% scags)]
   colnames(all_combs) <- c("Var1", "Var2", scags_name)
   return(all_combs)
-  }
+}
 
 intermediate_scags <- function(vars, data, scags){
   #fakefunc <- function(vars, data){sc_convex(pull(data, var=vars[[1]]), pull(data, var=vars[[2]]))}
   x <- pull(data, var=vars[[1]])
   y <- pull(data, var=vars[[2]])
   return(calc_scags(x,y,scags))
-#return(calc_scags(x,y, scags))
+  #return(calc_scags(x,y, scags))
 }
 
 
@@ -99,6 +99,5 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
   scagnostic_calcs <- c(outlying,stringy, striated, clumpy, sparse, skewed, convex, skinny, monotonic, splines, dcor)
   return(scagnostic_calcs)
 }
-
 
 
