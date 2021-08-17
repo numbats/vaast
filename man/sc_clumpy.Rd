@@ -2,9 +2,18 @@
 % Please edit documentation in R/mst.R
 \name{sc_clumpy}
 \alias{sc_clumpy}
+\alias{sc_clumpy.scree}
+\alias{sc_clumpy.default}
+\alias{sc_clumpy.igraph}
 \title{Compute clumpy scagnostic measure using MST}
 \usage{
 sc_clumpy(x, y)
+
+\method{sc_clumpy}{scree}(x, y = NULL)
+
+\method{sc_clumpy}{default}(x, y)
+
+\method{sc_clumpy}{igraph}(mymst, x)
 }
 \description{
 Compute clumpy scagnostic measure using MST
@@ -21,5 +30,13 @@ Compute clumpy scagnostic measure using MST
   sc_clumpy(anscombe$x2, anscombe$y2)
   sc_clumpy(anscombe$x3, anscombe$y3)
   sc_clumpy(anscombe$x4, anscombe$y4)
+
+  ggplot(datasaurus_dozen, aes(x=x, y=y)) +
+    geom_point() +
+    facet_wrap(~dataset, ncol=3, scales = "free")
+  sc_clumpy(datasaurus_dozen_wide$away_x, datasaurus_dozen_wide$away_y)
+  sc_clumpy(datasaurus_dozen_wide$dino_x, datasaurus_dozen_wide$dino_y)
+  sc_clumpy(datasaurus_dozen_wide$dots_x, datasaurus_dozen_wide$dots_y)
+  sc_clumpy(datasaurus_dozen_wide$h_lines_x, datasaurus_dozen_wide$h_lines_y)
 
 }

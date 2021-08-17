@@ -2,9 +2,18 @@
 % Please edit documentation in R/alphahull.R
 \name{sc_skinny}
 \alias{sc_skinny}
+\alias{sc_skinny.scree}
+\alias{sc_skinny.default}
+\alias{sc_skinny.ahull}
 \title{Compute convex scagnostic measures}
 \usage{
 sc_skinny(x, y)
+
+\method{sc_skinny}{scree}(x, y = NULL)
+
+\method{sc_skinny}{default}(x, y)
+
+\method{sc_skinny}{ahull}(ahull)
 }
 \description{
 Compute convex scagnostic measures

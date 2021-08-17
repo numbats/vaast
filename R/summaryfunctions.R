@@ -1,14 +1,14 @@
 #' Compute scagnostics on all possible scatter plots for the given data
 #'
 #' @examples
-#'
+#' @importFrom magrittr %>%
 #' @export
 sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor"), groups=NULL){
   all_combs <- expand.grid(colnames(all_data),colnames(all_data))%>%
-    filter(!(Var1==Var2))
+    dplyr::filter(!(Var1==Var2))
   #get rid of reversed duplicates
   all_combs <- all_combs[!duplicated(apply(all_combs,1,function(x) paste(sort(x),collapse=''))),]
-  if(length(scags)==1){
+  if (length(scags)==1){
     all_combs <- cbind(all_combs, apply(all_combs, 1, vaast:::intermediate_scags, data=all_data, scags=scags))
   }
   else{
@@ -22,8 +22,8 @@ sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clu
 
 intermediate_scags <- function(vars, data, scags){
   #fakefunc <- function(vars, data){sc_convex(pull(data, var=vars[[1]]), pull(data, var=vars[[2]]))}
-  x <- pull(data, var=vars[[1]])
-  y <- pull(data, var=vars[[2]])
+  x <- dplyr::pull(data, var=vars[[1]])
+  y <- dplyr::pull(data, var=vars[[2]])
   return(calc_scags(x,y,scags))
   #return(calc_scags(x,y, scags))
 }
@@ -104,7 +104,7 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
 #' Build a SPLOM for the selected scagnostics
 #'
 #' @examples
-#'
+#' @importFrom GGally scatmat
 #' @export
 sc_splom <- function(sca_dataset){
   #GGally::scatmat(sca_dataset)

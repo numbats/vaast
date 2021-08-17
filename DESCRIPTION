@@ -18,7 +18,8 @@ Imports:
     splancs,
     tripack,
     dplyr,
-    ggplot2
+    ggplot2,
+    magrittr
 RoxygenNote: 7.1.1
 Suggests: 
     rmarkdown,

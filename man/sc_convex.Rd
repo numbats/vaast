@@ -2,9 +2,18 @@
 % Please edit documentation in R/alphahull.R
 \name{sc_convex}
 \alias{sc_convex}
+\alias{sc_convex.scree}
+\alias{sc_convex.default}
+\alias{sc_convex.ahull}
 \title{Compute convex scagnostic measures}
 \usage{
 sc_convex(x, y)
+
+\method{sc_convex}{scree}(x, y = NULL)
+
+\method{sc_convex}{default}(x, y)
+
+\method{sc_convex}{ahull}(chull, ahull)
 }
 \description{
 Compute convex scagnostic measures

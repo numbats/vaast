@@ -2,9 +2,18 @@
 % Please edit documentation in R/mst.R
 \name{sc_stringy}
 \alias{sc_stringy}
+\alias{sc_stringy.scree}
+\alias{sc_stringy.default}
+\alias{sc_stringy.igraph}
 \title{Compute stringy scagnostic measure using MST}
 \usage{
 sc_stringy(x, y)
+
+\method{sc_stringy}{scree}(x, y = NULL)
+
+\method{sc_stringy}{default}(x, y)
+
+\method{sc_stringy}{igraph}(mst)
 }
 \description{
 Compute stringy scagnostic measure using MST

@@ -2,9 +2,18 @@
 % Please edit documentation in R/mst.R
 \name{sc_striated}
 \alias{sc_striated}
+\alias{sc_striated.scree}
+\alias{sc_striated.default}
+\alias{sc_striated.igraph}
 \title{Compute stirated scagnostic measure using MST}
 \usage{
 sc_striated(x, y)
+
+\method{sc_striated}{scree}(x, y = NULL)
+
+\method{sc_striated}{default}(x, y)
+
+\method{sc_striated}{igraph}(mst, x)
 }
 \description{
 Compute stirated scagnostic measure using MST
