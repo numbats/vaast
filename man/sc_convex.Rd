@@ -4,7 +4,7 @@
 \alias{sc_convex}
 \alias{sc_convex.scree}
 \alias{sc_convex.default}
-\alias{sc_convex.ahull}
+\alias{sc_convex.list}
 \title{Compute convex scagnostic measures}
 \usage{
 sc_convex(x, y)
@@ -13,7 +13,7 @@ sc_convex(x, y)
 
 \method{sc_convex}{default}(x, y)
 
-\method{sc_convex}{ahull}(chull, ahull)
+\method{sc_convex}{list}(chull, ahull)
 }
 \description{
 Compute convex scagnostic measures

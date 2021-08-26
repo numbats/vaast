@@ -4,7 +4,7 @@
 \alias{sc_skinny}
 \alias{sc_skinny.scree}
 \alias{sc_skinny.default}
-\alias{sc_skinny.ahull}
+\alias{sc_skinny.list}
 \title{Compute convex scagnostic measures}
 \usage{
 sc_skinny(x, y)
@@ -13,7 +13,7 @@ sc_skinny(x, y)
 
 \method{sc_skinny}{default}(x, y)
 
-\method{sc_skinny}{ahull}(ahull)
+\method{sc_skinny}{list}(ahull)
 }
 \description{
 Compute convex scagnostic measures

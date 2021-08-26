@@ -346,6 +346,7 @@ sc_outlying.default <- function(x, y){
 
 #' @export
 sc_outlying.igraph <- function(mymst, x){
+  #make into matrix
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
   #calculate w value
   mstmat_diag <- mstmat
@@ -371,4 +372,17 @@ gen_mst <- function(del, weights) {
   graph <- igraph::graph_from_edgelist(edges, directed = FALSE)
   graph <- igraph::set_edge_attr(graph, "weight", value = weights)
   igraph::mst(graph, weights =  igraph::E(graph)$weight)
+}
+
+outlying_removal <- function(mst, scr){
+  #function that takes the mst and returns a list of outliers
+  mstmat <- matrix(mst[], nrow=length(scr[["del"]][["x"]][,1]))
+  edges <- sort(mstmat_diag[which(mstmat>0)])
+  q25 <- edges[floor(0.25*length(edges))]
+  q75 <- edges[floor(0.75*length(edges))]
+  w <- q75 + 1.5*(q75-q25)
+  mstmat_check <- mstmat
+  mstmat_check[mstmat>w]=0
+  rowsum <- mstmat_check%*%rep(1, length(mstmat_check[1,]))
+  mstmat[which(rowsum==0),]
 }

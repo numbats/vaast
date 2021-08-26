@@ -4,8 +4,12 @@
 \alias{sc_splom}
 \title{Build a SPLOM for the selected scagnostics}
 \usage{
-sc_splom(sca_dataset)
+sc_splom(sca_dataset, interactive = FALSE)
 }
 \description{
 Build a SPLOM for the selected scagnostics
+}
+\examples{
+scag_data <- sc_pairwise(datasaurus_dozen_wide)
+sc_splom(scag_data)
 }

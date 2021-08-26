@@ -1,8 +1,9 @@
 #' Compute scagnostics on all possible scatter plots for the given data
 #'
 #' @examples
+#' sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
 #' @importFrom magrittr %>%
-#' @importFrom pbaaply pbapply
+#' @importFrom pbapply pbapply
 #' @export
 sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor"), groups=NULL){
   all_combs <- expand.grid(colnames(all_data),colnames(all_data))%>%
@@ -33,11 +34,16 @@ intermediate_scags <- function(vars, data, scags){
 #' Compute selected scagnostics
 #'
 #' @examples
+#' #Use as a summary function
+#' require(dplyr)
+#' datasaurus_dozen %>% group_by(dataset) %>% summarise(monotonic = calc_scags(x,y, scags="monotonic"))
 #'
+#' #calculate a large number of scagnostics together
+#' calc_scags(anscombe$x1, anscombe$y1)
 #' @export
 calc_scags <- function(x, y,
                        scags=c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor"),
-                       robustoutliers = TRUE){
+                       removeoutliers = TRUE){
   #set all scagnostics to null
   outlying = NULL
   stringy = NULL
@@ -108,6 +114,8 @@ calc_scags <- function(x, y,
 #' Build a SPLOM for the selected scagnostics
 #'
 #' @examples
+#' scag_data <- sc_pairwise(datasaurus_dozen_wide)
+#' sc_splom(scag_data)
 #' @importFrom GGally ggpairs
 #' @importFrom plotly ggplotly
 #' @export
