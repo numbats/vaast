@@ -9,10 +9,10 @@ sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clu
   #get rid of reversed duplicates
   all_combs <- all_combs[!duplicated(apply(all_combs,1,function(x) paste(sort(x),collapse=''))),]
   if (length(scags)==1){
-    all_combs <- cbind(all_combs, apply(all_combs, 1, vaast:::intermediate_scags, data=all_data, scags=scags))
+    all_combs <- cbind(all_combs, pbapply::pbapply(all_combs, 1, vaast:::intermediate_scags, data=all_data, scags=scags))
   }
   else{
-    all_combs <- cbind(all_combs, t(apply(all_combs, 1, vaast:::intermediate_scags, data=all_data, scags=scags)))
+    all_combs <- cbind(all_combs, t(pbapply::pbapply(all_combs, 1, vaast:::intermediate_scags, data=all_data, scags=scags)))
   }
   scags_name <- c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor")
   scags_name <- scags_name[which(scags_name %in% scags)]
@@ -34,7 +34,9 @@ intermediate_scags <- function(vars, data, scags){
 #' @examples
 #'
 #' @export
-calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor")){
+calc_scags <- function(x, y,
+                       scags=c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor"),
+                       robustoutliers = TRUE){
   #set all scagnostics to null
   outlying = NULL
   stringy = NULL
@@ -47,6 +49,7 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
   monotonic = NULL
   splines = NULL
   dcor = NULL
+
   #OUTLYING ADJUSTMENT
   #original_scree <- scree(x,y)
   #original_mst <- gen_mst(x,y)
@@ -80,10 +83,10 @@ calc_scags <- function(x, y, scags=c("outlying","stringy", "striated", "clumpy",
   chull <- gen_conv_hull(sc$del)
   ahull <- gen_alpha_hull(sc$del, sc$alpha)
   if("convex" %in% scags){
-    convex <- sc_convex.ahull(chull,ahull)
+    convex <- sc_convex.list(chull,ahull)
   }
   if("skinny" %in% scags){
-    skinny <- sc_skinny.ahull(ahull)
+    skinny <- sc_skinny.list(ahull)
   }
 
   #CALCULATE ASSOCIATION MEASURES

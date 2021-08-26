@@ -30,7 +30,7 @@ sc_convex.scree <- function(x,y = NULL) {
   stopifnot(is.null(y))
   chull <- gen_conv_hull(x$del)
   ahull <- gen_alpha_hull(x$del, x$alpha)
-  sc_convex.ahull(chull, ahull)
+  sc_convex.list(chull, ahull)
 }
 
 #' @rdname sc_convex
@@ -42,7 +42,7 @@ sc_convex.default <- function(x, y){
 
 #' @rdname sc_convex
 #' @export
-sc_convex.ahull <- function(chull, ahull){
+sc_convex.list <- function(chull, ahull){
   chull_area <- splancs::areapl(cbind(chull$x, chull$y))
   ahull_area <- alphahull::areaahull(ahull)
   ahull_area / chull_area
@@ -78,7 +78,7 @@ sc_skinny <- function(x, y) UseMethod("sc_skinny")
 sc_skinny.scree <- function(x, y = NULL) {
   stopifnot(is.null(y))
   ahull <- gen_alpha_hull(x$del, x$alpha)
-  sc_skinny.ahull(ahull)
+  sc_skinny.list(ahull)
 }
 
 #' @rdname sc_skinny
@@ -90,7 +90,7 @@ sc_skinny.default <- function(x, y){
 
 #' @rdname sc_skinny
 #' @export
-sc_skinny.ahull <- function(ahull){
+sc_skinny.list <- function(ahull){
   ahull_area <- alphahull::areaahull(ahull)
   1 - sqrt(4*pi * ahull_area) / ahull$length
 }
