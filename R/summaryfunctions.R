@@ -111,19 +111,3 @@ calc_scags <- function(x, y,
 }
 
 
-#' Build a SPLOM for the selected scagnostics
-#'
-#' @examples
-#' scag_data <- sc_pairwise(datasaurus_dozen_wide)
-#' sc_splom(scag_data)
-#' @importFrom GGally ggpairs
-#' @importFrom plotly ggplotly
-#' @export
-sc_splom <- function(sca_dataset, interactive=FALSE){
-  p <- GGally::ggpairs(sca_dataset, columns=3:length(sca_dataset[1,]))
-  #if(interactive==TRUE){
-  #  p <- plotly::ggplotly(p, tootip=c("Var1", "Var2"))
-  #}
-  p
-}
-
