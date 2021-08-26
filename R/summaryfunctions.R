@@ -2,6 +2,7 @@
 #'
 #' @examples
 #' @importFrom magrittr %>%
+#' @importFrom pbaaply pbapply
 #' @export
 sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor"), groups=NULL){
   all_combs <- expand.grid(colnames(all_data),colnames(all_data))%>%
@@ -107,9 +108,14 @@ calc_scags <- function(x, y,
 #' Build a SPLOM for the selected scagnostics
 #'
 #' @examples
-#' @importFrom GGally scatmat
+#' @importFrom GGally ggpairs
+#' @importFrom plotly ggplotly
 #' @export
-sc_splom <- function(sca_dataset){
-  #GGally::scatmat(sca_dataset)
+sc_splom <- function(sca_dataset, interactive=FALSE){
+  p <- GGally::ggpairs(sca_dataset, columns=3:length(sca_dataset[1,]))
+  #if(interactive==TRUE){
+  #  p <- plotly::ggplotly(p, tootip=c("Var1", "Var2"))
+  #}
+  p
 }
 
