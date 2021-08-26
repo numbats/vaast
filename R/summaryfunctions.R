@@ -110,4 +110,3 @@ calc_scags <- function(x, y,
   return(scagnostic_calcs)
 }
 
-
