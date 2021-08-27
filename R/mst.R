@@ -348,21 +348,22 @@ sc_outlying.default <- function(x, y){
 sc_outlying.igraph <- function(mymst, x){
   #make into matrix
   mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
+  outliers <- outlying_identify(mymst, x)
   #calculate w value
-  mstmat_diag <- mstmat
-  mstmat_diag[upper.tri(mstmat, diag = FALSE)]=0
-  edges <- sort(mstmat_diag[which(mstmat>0)])
-  q25 <- edges[floor(0.25*length(edges))]
-  q75 <- edges[floor(0.75*length(edges))]
-  w <- q75 + 1.5*(q75-q25)
+  #mstmat_diag <- mstmat
+  #mstmat_diag[upper.tri(mstmat, diag = FALSE)]=0
+  #edges <- sort(mstmat_diag[which(mstmat>0)])
+  #q25 <- edges[floor(0.25*length(edges))]
+  #q75 <- edges[floor(0.75*length(edges))]
+  #w <- q75 + 1.5*(q75-q25)
 
   #set values above w to 0 in matrix to find outlying
-  mstmat_check <- mstmat
-  mstmat_check[mstmat>w]=0
-  rowsum <- mstmat_check%*%rep(1, length(mstmat_check[1,])) #row sum of matrix, if 0 all edges are above this value
+  #mstmat_check <- mstmat
+  #mstmat_check[mstmat>w]=0
+  #rowsum <- mstmat_check%*%rep(1, length(mstmat_check[1,])) #row sum of matrix, if 0 all edges are above this value
 
   #calculate outlying value
-  numer <- sum(mstmat[which(rowsum==0),]) #sum of edges of outlying points
+  numer <- sum(mstmat[outliers,]) #sum of edges of outlying points
   denom <- sum(mstmat)
   numer/denom
 }
@@ -374,15 +375,48 @@ gen_mst <- function(del, weights) {
   igraph::mst(graph, weights =  igraph::E(graph)$weight)
 }
 
-outlying_removal <- function(mst, scr){
-  #function that takes the mst and returns a list of outliers
+outlying_identify <- function(mst, scr){
+  #make into upper tri-matrix
   mstmat <- matrix(mst[], nrow=length(scr[["del"]][["x"]][,1]))
+  mstmat_diag <- mstmat
+  mstmat_diag[upper.tri(mstmat, diag = FALSE)]=0
+
+  #calculate w value
   edges <- sort(mstmat_diag[which(mstmat>0)])
   q25 <- edges[floor(0.25*length(edges))]
   q75 <- edges[floor(0.75*length(edges))]
   w <- q75 + 1.5*(q75-q25)
+
+  #set values above w to 0 in matrix to find outlying
   mstmat_check <- mstmat
   mstmat_check[mstmat>w]=0
+
+  #row sum of matrix, if 0 all edges are above this value
   rowsum <- mstmat_check%*%rep(1, length(mstmat_check[1,]))
-  mstmat[which(rowsum==0),]
+  #return the outlying observation
+  which(rowsum==0)
+}
+
+original_and_robust <- function(x,y){
+  #construct original scree and MST
+  sc_original <- scree(x,y)
+  mst_original <- gen_mst(sc_original$del, sc_original$weights)
+
+  #identify outliers and remove them from the data
+  outliers <- outlying_identify(mst_original, sc_original)
+  new_x <- x[-outliers]
+  new_y <- y[-outliers]
+
+  #recalculate scree and MST
+  sc_robust <- scree(new_x,new_y)
+  mst_robust <- gen_mst(sc_robust$del, sc_robust$weights)
+
+  #output 4 objects as a list
+  structure(
+    list(
+      scree_ori = sc_original,
+      mst_ori  = mst_original,
+      scree_rob = sc_robust,
+      mst_rob = mst_robust
+    ))
 }
