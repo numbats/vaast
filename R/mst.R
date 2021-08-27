@@ -345,10 +345,19 @@ sc_outlying.default <- function(x, y){
 }
 
 #' @export
-sc_outlying.igraph <- function(mymst, x){
+sc_outlying.list <- function(screemstlist){
+  #input: list of scree and mst object
+  #output: outlying mst value
+
+  #get the mst's
+  orginalmst <- screemstlist$mst_ori
+  removedmst <- screemstlist$mst_rob
+
+  #get the edges
+
   #make into matrix
-  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
-  outliers <- outlying_identify(mymst, x)
+  #mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
+  #outliers <- outlying_identify(mymst, x)
   #calculate w value
   #mstmat_diag <- mstmat
   #mstmat_diag[upper.tri(mstmat, diag = FALSE)]=0
@@ -376,6 +385,9 @@ gen_mst <- function(del, weights) {
 }
 
 outlying_identify <- function(mst, scr){
+  #input: takes a mst and scree
+  #output: rown number of
+
   #make into upper tri-matrix
   mstmat <- matrix(mst[], nrow=length(scr[["del"]][["x"]][,1]))
   mstmat_diag <- mstmat
@@ -398,6 +410,9 @@ outlying_identify <- function(mst, scr){
 }
 
 original_and_robust <- function(x,y){
+  #input: data for 2 variables x and y
+  #output: list of scree and MST objects
+
   #construct original scree and MST
   sc_original <- scree(x,y)
   mst_original <- gen_mst(sc_original$del, sc_original$weights)
