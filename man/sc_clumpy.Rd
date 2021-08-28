@@ -4,7 +4,7 @@
 \alias{sc_clumpy}
 \alias{sc_clumpy.scree}
 \alias{sc_clumpy.default}
-\alias{sc_clumpy.list}
+\alias{sc_clumpy.igraph}
 \title{Compute clumpy scagnostic measure using MST}
 \usage{
 sc_clumpy(x, y)
@@ -13,7 +13,7 @@ sc_clumpy(x, y)
 
 \method{sc_clumpy}{default}(x, y)
 
-\method{sc_clumpy}{list}(mymst, x)
+\method{sc_clumpy}{igraph}(mymst, x)
 }
 \description{
 Compute clumpy scagnostic measure using MST
