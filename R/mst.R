@@ -345,32 +345,14 @@ sc_outlying.default <- function(x, y){
 }
 
 #' @export
-sc_outlying.list <- function(screemstlist){
-  #input: list of scree and mst object
+sc_outlying.list <- function(mymst, x){
+  #input: original mst (mymst) and scree object (x)
   #output: outlying mst value
 
-  #get the mst's
-  orginalmst <- screemstlist$mst_ori
-  removedmst <- screemstlist$mst_rob
-
-  #get the edges
-
   #make into matrix
-  #mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
-  #outliers <- outlying_identify(mymst, x)
-  #calculate w value
-  #mstmat_diag <- mstmat
-  #mstmat_diag[upper.tri(mstmat, diag = FALSE)]=0
-  #edges <- sort(mstmat_diag[which(mstmat>0)])
-  #q25 <- edges[floor(0.25*length(edges))]
-  #q75 <- edges[floor(0.75*length(edges))]
-  #w <- q75 + 1.5*(q75-q25)
-
-  #set values above w to 0 in matrix to find outlying
-  #mstmat_check <- mstmat
-  #mstmat_check[mstmat>w]=0
-  #rowsum <- mstmat_check%*%rep(1, length(mstmat_check[1,])) #row sum of matrix, if 0 all edges are above this value
-
+  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
+  #identify outliers
+  outliers <- outlying_identify(mymst, x)
   #calculate outlying value
   numer <- sum(mstmat[outliers,]) #sum of edges of outlying points
   denom <- sum(mstmat)
