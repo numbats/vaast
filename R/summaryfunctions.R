@@ -4,7 +4,7 @@
 #' sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
 #'
 #' @importFrom magrittr %>%
-#' @importFrom pbapply pbapply
+#' @importFrom progress progress_bar
 #' @export
 sc_pairwise <- function(all_data,
                         scags=c("outlying","stringy", "striated",
