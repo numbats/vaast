@@ -4,7 +4,7 @@
 \alias{sc_sparse}
 \alias{sc_sparse.scree}
 \alias{sc_sparse.default}
-\alias{sc_sparse.igraph}
+\alias{sc_sparse.list}
 \title{Compute sparse scagnostic measure using MST}
 \usage{
 sc_sparse(x, y)
@@ -13,7 +13,7 @@ sc_sparse(x, y)
 
 \method{sc_sparse}{default}(x, y)
 
-\method{sc_sparse}{igraph}(mymst, x)
+\method{sc_sparse}{list}(mymst, x)
 }
 \description{
 Compute sparse scagnostic measure using MST

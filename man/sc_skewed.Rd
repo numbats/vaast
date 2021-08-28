@@ -4,7 +4,7 @@
 \alias{sc_skewed}
 \alias{sc_skewed.scree}
 \alias{sc_skewed.default}
-\alias{sc_skewed.igraph}
+\alias{sc_skewed.list}
 \title{Compute skewed scagnostic measure using MST}
 \usage{
 sc_skewed(x, y)
@@ -13,7 +13,7 @@ sc_skewed(x, y)
 
 \method{sc_skewed}{default}(x, y)
 
-\method{sc_skewed}{igraph}(mymst, x)
+\method{sc_skewed}{list}(mymst, x)
 }
 \description{
 Compute skewed scagnostic measure using MST
