@@ -2,32 +2,34 @@
 #'
 #' @examples
 #' sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
+#'
 #' @importFrom magrittr %>%
 #' @importFrom pbapply pbapply
 #' @export
-sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor"), groups=NULL){
+sc_pairwise <- function(all_data,
+                        scags=c("outlying","stringy", "striated",
+                                "clumpy", "sparse","skewed",
+                                "convex","skinny","monotonic",
+                                "splines","dcor"),
+                        groups=NULL){
+
+  #make a dataset of all pairwise variable combinations
   all_combs <- expand.grid(colnames(all_data),colnames(all_data))%>%
     dplyr::filter(!(Var1==Var2))
+
   #get rid of reversed duplicates
   all_combs <- all_combs[!duplicated(apply(all_combs,1,function(x) paste(sort(x),collapse=''))),]
-  if (length(scags)==1){
-    all_combs <- cbind(all_combs, pbapply::pbapply(all_combs, 1, vaast:::intermediate_scags, data=all_data, scags=scags))
-  }
-  else{
-    all_combs <- cbind(all_combs, t(pbapply::pbapply(all_combs, 1, vaast:::intermediate_scags, data=all_data, scags=scags)))
-  }
-  scags_name <- c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor")
-  scags_name <- scags_name[which(scags_name %in% scags)]
-  colnames(all_combs) <- c("Var1", "Var2", scags_name)
-  return(all_combs)
+
+  #calculate scagnostics
+  all_combs %>%
+    dplyr::group_by(Var1, Var2)%>%
+    dplyr::summarise(intermediate_scags(vars=c(Var1, Var2), data=all_data, scags=scags))
 }
 
 intermediate_scags <- function(vars, data, scags){
-  #fakefunc <- function(vars, data){sc_convex(pull(data, var=vars[[1]]), pull(data, var=vars[[2]]))}
   x <- dplyr::pull(data, var=vars[[1]])
   y <- dplyr::pull(data, var=vars[[2]])
   return(calc_scags(x,y,scags))
-  #return(calc_scags(x,y, scags))
 }
 
 
@@ -36,14 +38,20 @@ intermediate_scags <- function(vars, data, scags){
 #' @examples
 #' #Use as a summary function
 #' require(dplyr)
-#' datasaurus_dozen %>% group_by(dataset) %>% summarise(monotonic = calc_scags(x,y, scags="monotonic"))
+#' datasaurus_dozen %>% group_by(dataset) %>% summarise(calc_scags(x,y, scags=c("monotonic", "outlying", "convex")))
+#' sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
 #'
 #' #calculate a large number of scagnostics together
 #' calc_scags(anscombe$x1, anscombe$y1)
+#'
+#' #calcualte selected scagnostics on a single pair
+#' calc_scags(anscombe$x1, anscombe$y1, scags=c("monotonic", "outlying","convex"))
+#'
 #' @export
 calc_scags <- function(x, y,
-                       scags=c("outlying","stringy", "striated", "clumpy", "sparse","skewed","convex","skinny","monotonic","splines","dcor"),
-                       removeoutliers = TRUE){
+                       scags=c("outlying","stringy", "striated",
+                               "clumpy", "sparse","skewed","convex",
+                               "skinny","monotonic","splines","dcor")){
   #set all scagnostics to null
   outlying = NULL
   stringy = NULL
@@ -57,16 +65,19 @@ calc_scags <- function(x, y,
   splines = NULL
   dcor = NULL
 
-  #OUTLYING ADJUSTMENT
-  #original_scree <- scree(x,y)
-  #original_mst <- gen_mst(x,y)
-  #should we calculate new MST?
+  #make original and outlying adjusted scree+mst
+  sm_list <- original_and_robust(x,y)
 
-  #CALC SCREE
-  sc <- scree(x, y)
+  #scree and mst without outlier removal
+  sc_orig <- sm_list$scree_ori
+  mst_orig <- sm_list$mst_ori
+
+
+  #scree and mst with outlier removal
+  sc <- sm_list$scree_rob
+  mst <- sm_list$mst_rob
 
   #CALCULATE MST MEASURES
-  mst <- gen_mst(sc$del, sc$weights)
   if("stringy" %in% scags){
     stringy <- sc_stringy.igraph(mst)
   }
@@ -84,17 +95,19 @@ calc_scags <- function(x, y,
 
   }
   if("outlying" %in% scags){
-    outlying <- sc_outlying.igraph(mst, sc)
+    outlying <- sc_outlying.igraph(mst_orig, sc_orig)
   }
+
   #CALCULATE ALPHA HULL MEASURES
-  chull <- gen_conv_hull(sc$del)
-  ahull <- gen_alpha_hull(sc$del, sc$alpha)
-  if("convex" %in% scags){
-    convex <- sc_convex.list(chull,ahull)
-  }
-  if("skinny" %in% scags){
-    skinny <- sc_skinny.list(ahull)
-  }
+  if(xor("convex" %in% scags, "skinny" %in% scags)){
+    chull <- gen_conv_hull(sc$del)
+    ahull <- gen_alpha_hull(sc$del, sc$alpha)
+    if("convex" %in% scags){
+      convex <- sc_convex.list(chull,ahull)
+    }
+    if("skinny" %in% scags){
+      skinny <- sc_skinny.list(ahull)
+    }}
 
   #CALCULATE ASSOCIATION MEASURES
   if("monotonic" %in% scags){
@@ -106,7 +119,17 @@ calc_scags <- function(x, y,
   if("dcor" %in% scags){
     dcor <- sc_splines(x,y)
   }
-  scagnostic_calcs <- c(outlying,stringy, striated, clumpy, sparse, skewed, convex, skinny, monotonic, splines, dcor)
+  scagnostic_calcs <- dplyr::tibble("outlying"=outlying,
+                             "stringy"=stringy,
+                             "striated"=striated,
+                             "clumpy"=clumpy,
+                             "sparse"=sparse,
+                             "skewed"=skewed,
+                             "convex"=convex,
+                             "skinny"=skinny,
+                             "monotonic"=monotonic,
+                             "splines"=splines,
+                             "dcor"=dcor)
   return(scagnostic_calcs)
 }
 
