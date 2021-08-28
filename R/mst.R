@@ -399,14 +399,21 @@ original_and_robust <- function(x,y){
   sc_original <- scree(x,y)
   mst_original <- gen_mst(sc_original$del, sc_original$weights)
 
-  #identify outliers and remove them from the data
+  #identify outliers
   outliers <- outlying_identify(mst_original, sc_original)
-  new_x <- x[-outliers]
-  new_y <- y[-outliers]
 
-  #recalculate scree and MST
-  sc_robust <- scree(new_x,new_y)
-  mst_robust <- gen_mst(sc_robust$del, sc_robust$weights)
+  #set outlier removed to original in case of no outliers
+  sc_robust <- sc_original
+  mst_robust <- mst_original
+
+  #outlier removed scree and mst
+  if(length(outliers)>0){
+    new_x <- x[-outliers]
+    new_y <- y[-outliers]
+    #recalculate scree and MST
+    sc_robust <- scree(new_x,new_y)
+    mst_robust <- gen_mst(sc_robust$del, sc_robust$weights)
+  }
 
   #output 4 objects as a list
   structure(
