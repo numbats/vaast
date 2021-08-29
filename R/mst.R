@@ -285,14 +285,12 @@ sc_skewed.default <- function(x, y){
 #' @rdname sc_skewed
 #' @export
 sc_skewed.igraph <- function(mymst, x){
-  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
-  mstmat[upper.tri(mstmat, diag = FALSE)]=0
-  edges <- sort(mstmat[which(mstmat>0)])
+  mstmat <- twomstmat(mst,scr)$lowertri
+  edges <- mstmat[which(mstmat>0)]
+
   #calculate skewed value
-  q90 <- edges[floor(0.9*length(edges))]
-  q50 <- edges[floor(0.5*length(edges))]
-  q10 <- edges[floor(0.1*length(edges))]
-  (q90-q50)/(q90/q50) #no size adjustment
+  q <- quantile(edges, probs = c(0.9, 0.5, 0.1))
+  unname(diff(q[1:2])/diff(q[c(1,3)]))#no size adjustment
 }
 
 
@@ -350,9 +348,11 @@ sc_outlying.igraph <- function(mymst, x){
   #output: outlying mst value
 
   #make into matrix
-  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
+  mstmat <- twomstmat(mst,scr)$mat
+
   #identify outliers
   outliers <- outlying_identify(mymst, x)
+
   #calculate outlying value
   numer <- sum(mstmat[outliers,]) #sum of edges of outlying points
   denom <- sum(mstmat)
@@ -370,16 +370,14 @@ outlying_identify <- function(mst, scr){
   #input: takes a mst and scree
   #output: rown number of
 
-  #make into upper tri-matrix
-  mstmat <- matrix(mst[], nrow=length(scr[["del"]][["x"]][,1]))
-  mstmat_diag <- mstmat
-  mstmat_diag[upper.tri(mstmat, diag = FALSE)]=0
+  #get matrix and upper triangular matrix
+  matlist <- twomstmat(mst,scr)
+  mstmat <- matlist$mat
+  mstmat_lt <- matlist$lowertri
 
   #calculate w value
-  edges <- sort(mstmat_diag[which(mstmat>0)])
-  q25 <- edges[floor(0.25*length(edges))]
-  q75 <- edges[floor(0.75*length(edges))]
-  w <- q75 + 1.5*(q75-q25)
+  edges <- mstmat_lt[which(mstmat>0)]
+  w <- psi(edges)
 
   #set values above w to 0 in matrix to find outlying
   mstmat_check <- mstmat
@@ -423,4 +421,19 @@ original_and_robust <- function(x,y){
       scree_rob = sc_robust,
       mst_rob = mst_robust
     ))
+}
+
+twomstmat <- function(mst, scr){
+  #input: mst and scree
+  #output: mst full and lower triangular matrices
+
+  #make into upper tri-matrix
+  mst_mat <- matrix(mst[], nrow=length(scr[["del"]][["x"]][,1]))
+  mst_uppertri <- mst_mat
+  mst_uppertri[upper.tri(mstmat, diag = FALSE)]=0
+
+  #output matrix and upper triangular matrix
+  structure(
+    list(mat = mst_mat,
+         lowerri = mst_uppertri))
 }
