@@ -8,8 +8,7 @@ calc_scags(
   x,
   y,
   scags = c("outlying", "stringy", "striated", "clumpy", "sparse", "skewed", "convex",
-    "skinny", "monotonic", "splines", "dcor"),
-  removeoutliers = TRUE
+    "skinny", "monotonic", "splines", "dcor")
 )
 }
 \description{
@@ -18,8 +17,12 @@ Compute selected scagnostics
 \examples{
 #Use as a summary function
 require(dplyr)
-datasaurus_dozen \%>\% group_by(dataset) \%>\% summarise(monotonic = calc_scags(x,y, scags="monotonic"))
+datasaurus_dozen \%>\% group_by(dataset) \%>\% summarise(calc_scags(x,y, scags=c("monotonic", "outlying", "convex")))
 
 #calculate a large number of scagnostics together
 calc_scags(anscombe$x1, anscombe$y1)
+
+#calcualte selected scagnostics on a single pair
+calc_scags(anscombe$x1, anscombe$y1, scags=c("monotonic", "outlying","convex"))
+
 }

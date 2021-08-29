@@ -1,7 +1,11 @@
 #' Compute scagnostics on all possible scatter plots for the given data
 #'
 #' @examples
+#' #calculate selected scagnsotics
 #' sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
+#'
+#' #calculate all scagnsotics for all variable pairs
+#' sc_pairwise(datasaurus_dozen_wide)
 #'
 #' @importFrom magrittr %>%
 #' @importFrom progress progress_bar
@@ -20,13 +24,17 @@ sc_pairwise <- function(all_data,
   #get rid of reversed duplicates
   all_combs <- all_combs[!duplicated(apply(all_combs,1,function(x) paste(sort(x),collapse=''))),]
 
+  #set up progress bar (ticks in intermediate scags)
+  num_ticks <- length(all_combs$Var1)
+  pb <- progress_bar$new(format = "[:bar] (:percent) eta :eta", total = num_ticks)
   #calculate scagnostics
   all_combs %>%
     dplyr::group_by(Var1, Var2)%>%
-    dplyr::summarise(intermediate_scags(vars=c(Var1, Var2), data=all_data, scags=scags))
+    dplyr::summarise(intermediate_scags(vars=c(Var1, Var2), data=all_data, scags=scags, pb))
 }
 
-intermediate_scags <- function(vars, data, scags){
+intermediate_scags <- function(vars, data, scags, pb){
+  pb$tick()
   x <- dplyr::pull(data, var=vars[[1]])
   y <- dplyr::pull(data, var=vars[[2]])
   return(calc_scags(x,y,scags))
@@ -39,7 +47,6 @@ intermediate_scags <- function(vars, data, scags){
 #' #Use as a summary function
 #' require(dplyr)
 #' datasaurus_dozen %>% group_by(dataset) %>% summarise(calc_scags(x,y, scags=c("monotonic", "outlying", "convex")))
-#' sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
 #'
 #' #calculate a large number of scagnostics together
 #' calc_scags(anscombe$x1, anscombe$y1)

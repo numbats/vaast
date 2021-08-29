@@ -15,5 +15,10 @@ sc_pairwise(
 Compute scagnostics on all possible scatter plots for the given data
 }
 \examples{
+#calculate selected scagnsotics
 sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
+
+#calculate all scagnsotics for all variable pairs
+sc_pairwise(datasaurus_dozen_wide)
+
 }
