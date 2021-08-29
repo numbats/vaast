@@ -436,3 +436,4 @@ twomstmat <- function(mst, scr){
     list(mat = mst_mat,
          lowertri = mst_uppertri))
 }
+
