@@ -15,7 +15,7 @@ sc_pairwise <- function(all_data,
                                 "clumpy", "sparse","skewed",
                                 "convex","skinny","monotonic",
                                 "splines","dcor"),
-                        groups=NULL){
+                        euclid = TRUE){
 
   #make a dataset of all pairwise variable combinations
   all_combs <- expand.grid(colnames(all_data),colnames(all_data))%>%
@@ -31,6 +31,7 @@ sc_pairwise <- function(all_data,
   all_combs %>%
     dplyr::group_by(Var1, Var2)%>%
     dplyr::summarise(intermediate_scags(vars=c(Var1, Var2), data=all_data, scags=scags, pb))
+
 }
 
 intermediate_scags <- function(vars, data, scags, pb){
