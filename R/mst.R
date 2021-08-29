@@ -139,8 +139,8 @@ sc_clumpy.default <- function(x, y){
 #' @rdname sc_clumpy
 #' @export
 sc_clumpy.igraph <- function(mymst, x){
-  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
-  mstmat[upper.tri(mstmat, diag = FALSE)]=0
+  #lower triangular matrix
+  mstmat <- twomstmat(mymst,x)$lowertri
   #get cols and rows of each value
   edges <- which(mstmat>0)
   rows <- edges %% length(mstmat[,1])
@@ -226,11 +226,10 @@ sc_sparse.default <- function(x, y){
 #' @rdname sc_sparse
 #' @export
 sc_sparse.igraph <- function(mymst, x){
-  mstmat <- matrix(mymst[], nrow=length(x[["del"]][["x"]][,1]))
-  mstmat[upper.tri(mstmat, diag = FALSE)]=0
-  edges <- sort(mstmat[which(mstmat>0)])
+  mstmat <- twomstmat(mymst,x)$lowertri
+  edges <- mstmat[which(mstmat>0)]
   #calculate sparse value
-  edges[floor(0.9*length(edges))]
+  unname(quantile(edges, probs = 0.9))
 }
 
 
@@ -285,7 +284,7 @@ sc_skewed.default <- function(x, y){
 #' @rdname sc_skewed
 #' @export
 sc_skewed.igraph <- function(mymst, x){
-  mstmat <- twomstmat(mst,scr)$lowertri
+  mstmat <- twomstmat(mymst,x)$lowertri
   edges <- mstmat[which(mstmat>0)]
 
   #calculate skewed value
@@ -348,7 +347,7 @@ sc_outlying.igraph <- function(mymst, x){
   #output: outlying mst value
 
   #make into matrix
-  mstmat <- twomstmat(mst,scr)$mat
+  mstmat <- twomstmat(mymst,x)$mat
 
   #identify outliers
   outliers <- outlying_identify(mymst, x)
@@ -430,10 +429,10 @@ twomstmat <- function(mst, scr){
   #make into upper tri-matrix
   mst_mat <- matrix(mst[], nrow=length(scr[["del"]][["x"]][,1]))
   mst_uppertri <- mst_mat
-  mst_uppertri[upper.tri(mstmat, diag = FALSE)]=0
+  mst_uppertri[upper.tri(mst_mat, diag = FALSE)]=0
 
   #output matrix and upper triangular matrix
   structure(
     list(mat = mst_mat,
-         lowerri = mst_uppertri))
+         lowertri = mst_uppertri))
 }
