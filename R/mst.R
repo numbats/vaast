@@ -186,7 +186,7 @@ sc_clumpy.igraph <- function(mymst, x){
 
       #update counters
     #  additions <- c(c1new,c2new)
-    #}
+    }
 
 
     #reset inner loop values and remove target edge
