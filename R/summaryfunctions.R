@@ -1,12 +1,14 @@
 #' Compute scagnostics on all possible scatter plots for the given data
 #'
 #' @examples
-#' #calculate selected scagnsotics
+#' require(GGally)
+#' require(dplyr)
+#' #calculate selected scagnostics
 #' sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
 #'
-#' #calculate all scagnsotics for all variable pairs
-#' sc_pairwise(datasaurus_dozen_wide)
-#'
+#' #calculate all scagnsotics for all variable pairs and plot it
+#' p <- sc_pairwise(datasaurus_dozen_wide) %>% GGally::ggpairs(scagdata, columns = 3:ncol(scagdata))
+#' ggplotly(p)
 #' @importFrom magrittr %>%
 #' @importFrom progress progress_bar
 #' @export
