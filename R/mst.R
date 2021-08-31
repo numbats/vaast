@@ -139,37 +139,77 @@ sc_clumpy.default <- function(x, y){
 #' @rdname sc_clumpy
 #' @export
 sc_clumpy.igraph <- function(mymst, x){
+
   #lower triangular matrix
   mstmat <- twomstmat(mymst,x)$lowertri
-  #get cols and rows of each value
-  edges <- which(mstmat>0)
-  rows <- edges %% length(mstmat[,1])
-  cols <- (edges-1) %/% length(mstmat[,1]) +1
-  clumpy <- rep(0,length(edges))
-  for(i in seq(length(edges))){
-    #set value for edge in consideration
-    jval <- mstmat[edges[i]]
+
+  #make index objects to iterate through
+  matind <- which(mstmat>0)
+  rows <- matind %% length(mstmat[,1])
+  cols <- (matind-1) %/% length(mstmat[,1]) +1
+
+  print(matind)
+  print(rows)
+  print(cols)
+  #clumpy <- rep(0,length(edges))
+
+  for(j in seq(length(rows))){
+    #set mst we are going to remove all the edges from
+    mst_ej <- mstmat
+
+    #have two clusters sprawling out from the deleted edge (inex i)
+    clust1rowcol <- rows[j]
+    clust2rowcol <- cols[j]
+
+    #get weight of ej
+    ej_weight <- mst_ej[matind[j]]
+
+    #remove ej and all values in mst that are greater than ej
+    mst_ej[which(mst_ej>=ej_weight)] = 0
+
+    #remake index objects to edit within iteration
+    matind_ej <- which(mst_ej>0)
+    rows_ej <- matind_ej %% length(mst_ej[,1])
+    cols_ej <- (matind_ej-1) %/% length(mst_ej[,1]) +1
+
+
+    #initialise variable that checks if clusters have changed
+    newpoints <- c(clust1rowcol,clust2rowcol)
+    #while new edges to add,
+    while(length(newpoints)>0){
+      #add in new indices
+      #new <- c(x[which(y%in%new)],y[which(x%in%new)])
+      #clnew <- unique()
+      #c2new <- unique()
+
+      #update clusters
+
+      #update counters
+    #  additions <- c(c1new,c2new)
+    #}
+
+
     #reset inner loop values and remove target edge
-    inedges <- edges[-i]
-    inrows <- rows[-i]
-    incols <- cols[-i]
-    #make cluster with remaining edges (this second for loop is bad computationally oof)
-    for(j in seq(length(inedges))){
-      if(j==1){
-        ind=1
-      }
-      checkvec <- c(inrows[ind],incols[ind]) #lower triang matrix so need to check rows and cols
-      if((inrows[j]%in%checkvec | incols[j]%in%checkvec)& (j!=1)){
-        ind <- c(ind,j)
-      }
+    #inedges <- edges[-i]
+    #inrows <- rows[-i]
+    #incols <- cols[-i]
+    #make cluster with remaining edges
+    #for(j in seq(length(inedges))){
+    #  if(j==1){
+    #    ind=1
+    #  }
+    #  checkvec <- c(inrows[ind],incols[ind]) #lower triang matrix so need to check rows and cols
+    #  if((inrows[j]%in%checkvec | incols[j]%in%checkvec)& (j!=1)){
+    #    ind <- c(ind,j)
+    #  }
     }
-    cluster1 <- mstmat[inedges[ind]]
-    cluster2 <- mstmat[inedges[-ind]]
-    kval <- ifelse(sum(cluster1)<sum(cluster2), pmax(cluster1), pmax(cluster2))
-    clumpy[i] <- 1- (kval/jval)
-  }
-  clumpy <- clumpy[which(!is.na(clumpy))]
-  max(clumpy)
+    #cluster1 <- mstmat[inedges[ind]]
+    #cluster2 <- mstmat[inedges[-ind]]
+    #kval <- ifelse(sum(cluster1)<sum(cluster2), pmax(cluster1), pmax(cluster2))
+    #clumpy[i] <- 1- (kval/jval)
+  #}
+  #clumpy <- clumpy[which(!is.na(clumpy))]
+  #max(clumpy)
 
 }
 
