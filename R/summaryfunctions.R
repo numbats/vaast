@@ -121,7 +121,7 @@ calc_scags <- function(x, y,
   if("monotonic" %in% scags){
     monotonic <- sc_monotonic(x,y)
   }
-  if("splines"%in%scags){
+  if("splines" %in% scags){
     splines <- sc_splines(x,y)
   }
   if("dcor" %in% scags){
