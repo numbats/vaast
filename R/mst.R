@@ -143,23 +143,19 @@ sc_clumpy.igraph <- function(mymst, x){
   #lower triangular matrix
   mstmat <- twomstmat(mymst,x)$lowertri
 
-  #make index objects to iterate through
+  #make index variables to iterate through
   matind <- which(mstmat>0)
   rows <- matind %% length(mstmat[,1])
   cols <- (matind-1) %/% length(mstmat[,1]) +1
-
-  print(matind)
-  print(rows)
-  print(cols)
-  #clumpy <- rep(0,length(edges))
+  clumpy <- rep(0,length(matind))
 
   for(j in seq(length(rows))){
     #set mst we are going to remove all the edges from
     mst_ej <- mstmat
 
     #have two clusters sprawling out from the deleted edge (inex i)
-    clust1rowcol <- rows[j]
-    clust2rowcol <- cols[j]
+    c1rowcol <- rows[j]
+    c2rowcol <- cols[j]
 
     #get weight of ej
     ej_weight <- mst_ej[matind[j]]
@@ -172,44 +168,50 @@ sc_clumpy.igraph <- function(mymst, x){
     rows_ej <- matind_ej %% length(mst_ej[,1])
     cols_ej <- (matind_ej-1) %/% length(mst_ej[,1]) +1
 
-
     #initialise variable that checks if clusters have changed
-    newpoints <- c(clust1rowcol,clust2rowcol)
-    #while new edges to add,
-    while(length(newpoints)>0){
-      #add in new indices
-      #new <- c(x[which(y%in%new)],y[which(x%in%new)])
-      #clnew <- unique()
-      #c2new <- unique()
+    whilecheck <- c(c1rowcol,c2rowcol)
+    quitloop = 0
 
-      #update clusters
+    #add in new indices until both clusters are full
+    while(quitloop==0){
 
-      #update counters
-    #  additions <- c(c1new,c2new)
+      #find matches in rows/columns to join connected vertices
+      c1rowcol <- unique(c(c1rowcol,
+                           rows_ej[which(cols_ej%in%c1rowcol)],
+                           cols_ej[which(rows_ej%in%c1rowcol)]))
+      c2rowcol <- unique(c(c2rowcol,
+                           rows_ej[which(cols_ej%in%c2rowcol)],
+                           cols_ej[which(rows_ej%in%c2rowcol)]))
+
+      #check if indices are done updating
+      if(setequal(whilecheck, c(c1rowcol,c2rowcol))){
+        quitloop=1
+      }
+
+      #update while loop check
+      whilecheck = c(c1rowcol,c2rowcol)
+
     }
 
+    #get matrix indices of each of the clusters
+    c1ind <- unique(c(matind_ej[which(cols_ej%in%c1rowcol)],
+                      matind_ej[which(rows_ej%in%c1rowcol)]))
+    c2ind <- unique(c(matind_ej[which(cols_ej%in%c2rowcol)],
+                      matind_ej[which(rows_ej%in%c2rowcol)]))
 
-    #reset inner loop values and remove target edge
-    #inedges <- edges[-i]
-    #inrows <- rows[-i]
-    #incols <- cols[-i]
-    #make cluster with remaining edges
-    #for(j in seq(length(inedges))){
-    #  if(j==1){
-    #    ind=1
-    #  }
-    #  checkvec <- c(inrows[ind],incols[ind]) #lower triang matrix so need to check rows and cols
-    #  if((inrows[j]%in%checkvec | incols[j]%in%checkvec)& (j!=1)){
-    #    ind <- c(ind,j)
-    #  }
-    }
-    #cluster1 <- mstmat[inedges[ind]]
-    #cluster2 <- mstmat[inedges[-ind]]
-    #kval <- ifelse(sum(cluster1)<sum(cluster2), pmax(cluster1), pmax(cluster2))
-    #clumpy[i] <- 1- (kval/jval)
-  #}
-  #clumpy <- clumpy[which(!is.na(clumpy))]
-  #max(clumpy)
+    #get edge weights for each cluster
+    c1weights <- mst_ej[c1ind]
+    c2weights <- mst_ej[c2ind]
+
+    #set K weight value
+    ek_weight <- ifelse(sum(c1weights)<sum(c2weights), pmax(c1weights), pmax(c2weights))
+
+    #calculate this clumpy value
+    clumpy[j] <- 1- (ek_weight/ej_weight)
+  }
+  #remove NA and return final clumpy measure
+  clumpy <- clumpy[which(!is.na(clumpy))]
+  max(clumpy)
 
 }
 
