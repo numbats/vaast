@@ -30,6 +30,9 @@ scree <- function(x, y, binner = NULL, ...) {
   # cast to a matrix
   xy <- cbind(unitize(x), unitize(y))
 
+  # remove duplicates
+  xy <- xy[!duplicated(xy),]
+
   if (is.function(binner)) {
     xy <- binner(xy)
   }
