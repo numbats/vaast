@@ -14,15 +14,15 @@ df <- df %>%
   bind_rows(d)
 d <- flea %>%
   select(tars2, head) %>%
-  mutate(head = jitter(head, factor=0.1)) %>%
+  #mutate(head = jitter(head, factor=0.1)) %>%
   rename(x=tars2, y=head) %>%
   mutate(set = "stripes")
 df <- df %>%
   bind_rows(d)
 d <- flea %>%
   select(tars1, aede1) %>%
-  mutate(tars1 = jitter(tars1, factor=0.1),
-         aede1 = jitter(aede1, factor=0.1)) %>%
+  #mutate(tars1 = jitter(tars1, factor=0.1),
+  #       aede1 = jitter(aede1, factor=0.1)) %>%
   rename(x=tars1, y=aede1) %>%
   mutate(set = "clumps")
 df <- df %>%
