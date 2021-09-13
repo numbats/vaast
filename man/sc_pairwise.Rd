@@ -8,17 +8,27 @@ sc_pairwise(
   all_data,
   scags = c("outlying", "stringy", "striated", "clumpy", "sparse", "skewed", "convex",
     "skinny", "monotonic", "splines", "dcor"),
-  groups = NULL
+  euclid = TRUE
 )
 }
 \description{
 Compute scagnostics on all possible scatter plots for the given data
 }
 \examples{
-#calculate selected scagnsotics
-sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
+require(GGally)
+require(dplyr)
+# Calculate selected scagnostics
+sc_pairwise(datasaurus_dozen_wide,
+  scags=c("outlying","clumpy","monotonic"))
 
-#calculate all scagnsotics for all variable pairs
-sc_pairwise(datasaurus_dozen_wide)
+# Calculate all scagnsotics for all variable pairs and plot it
+p <- sc_pairwise(datasaurus_dozen_wide) \%>\%
+  GGally::ggpairs(scagdata, columns = 3:ncol(scagdata))
+p
+# to make it interactive use
+# plotly::ggplotly(p)
 
+}
+\seealso{
+calc_scags
 }

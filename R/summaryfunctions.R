@@ -1,23 +1,24 @@
 #' Compute scagnostics on all possible scatter plots for the given data
 #'
+#' @seealso calc_scags
 #' @examples
 #' require(GGally)
 #' require(dplyr)
-#' #calculate selected scagnostics
-#' sc_pairwise(datasaurus_dozen_wide, scags=c("outlying","clumpy","monotonic"))
+#' # Calculate selected scagnostics
+#' sc_pairwise(datasaurus_dozen_wide,
+#'   scags=c("outlying","clumpy","monotonic"))
 #'
-#' #calculate all scagnsotics for all variable pairs and plot it
-#' p <- sc_pairwise(datasaurus_dozen_wide) %>% GGally::ggpairs(scagdata, columns = 3:ncol(scagdata))
-#' ggplotly(p)
+#' # Calculate all scagnsotics for all variable pairs and plot it
+#' p <- sc_pairwise(datasaurus_dozen_wide) %>%
+#'   GGally::ggpairs(scagdata, columns = 3:ncol(scagdata))
+#' p
+#' # to make it interactive use
+#' # plotly::ggplotly(p)
+#'
 #' @importFrom magrittr %>%
 #' @importFrom progress progress_bar
 #' @export
-sc_pairwise <- function(all_data,
-                        scags=c("outlying","stringy", "striated",
-                                "clumpy", "sparse","skewed",
-                                "convex","skinny","monotonic",
-                                "splines","dcor"),
-                        euclid = TRUE){
+sc_pairwise <- function(all_data, scags=c("outlying","stringy", "striated", "clumpy", "sparse", "skewed", "convex","skinny","monotonic", "splines","dcor"), euclid = TRUE){
 
   #make a dataset of all pairwise variable combinations
   all_combs <- expand.grid(colnames(all_data),colnames(all_data))%>%
@@ -43,25 +44,27 @@ intermediate_scags <- function(vars, data, scags, pb){
   return(calc_scags(x,y,scags))
 }
 
-
-#' Compute selected scagnostics
+#' Compute selected scagnostics on subsets
 #'
+#' @seealso sc_pairwise
 #' @examples
-#' #Use as a summary function
-#' require(dplyr)
-#' datasaurus_dozen %>% group_by(dataset) %>% summarise(calc_scags(x,y, scags=c("monotonic", "outlying", "convex")))
+#' # Calculate selected scagnostics on a single pair
+#' calc_scags(anscombe$x1, anscombe$y1,
+#'   scags=c("monotonic", "outlying","convex"))
 #'
-#' #calculate a large number of scagnostics together
+#' # Calculate all large number of scagnostics together
 #' calc_scags(anscombe$x1, anscombe$y1)
 #'
-#' #calcualte selected scagnostics on a single pair
-#' calc_scags(anscombe$x1, anscombe$y1, scags=c("monotonic", "outlying","convex"))
+#' # Compute on long form data, or subsets
+#' # defined by a categorical variable
+#' require(dplyr)
+#' datasaurus_dozen %>%
+#'   group_by(dataset) %>%
+#'   summarise(calc_scags(x,y,
+#'     scags=c("monotonic", "outlying", "convex")))
 #'
 #' @export
-calc_scags <- function(x, y,
-                       scags=c("outlying","stringy", "striated",
-                               "clumpy", "sparse","skewed","convex",
-                               "skinny","monotonic","splines","dcor")){
+calc_scags <- function(x, y, scags=c("outlying", "stringy", "striated", "clumpy", "sparse", "skewed", "convex", "skinny", "monotonic", "splines", "dcor")){
   #set all scagnostics to null
   outlying = NULL
   stringy = NULL

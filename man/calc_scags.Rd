@@ -2,7 +2,7 @@
 % Please edit documentation in R/summaryfunctions.R
 \name{calc_scags}
 \alias{calc_scags}
-\title{Compute selected scagnostics}
+\title{Compute selected scagnostics on subsets}
 \usage{
 calc_scags(
   x,
@@ -12,17 +12,25 @@ calc_scags(
 )
 }
 \description{
-Compute selected scagnostics
+Compute selected scagnostics on subsets
 }
 \examples{
-#Use as a summary function
-require(dplyr)
-datasaurus_dozen \%>\% group_by(dataset) \%>\% summarise(calc_scags(x,y, scags=c("monotonic", "outlying", "convex")))
+# Calculate selected scagnostics on a single pair
+calc_scags(anscombe$x1, anscombe$y1,
+  scags=c("monotonic", "outlying","convex"))
 
-#calculate a large number of scagnostics together
+# Calculate all large number of scagnostics together
 calc_scags(anscombe$x1, anscombe$y1)
 
-#calcualte selected scagnostics on a single pair
-calc_scags(anscombe$x1, anscombe$y1, scags=c("monotonic", "outlying","convex"))
+# Compute on long form data, or subsets
+# defined by a categorical variable
+require(dplyr)
+datasaurus_dozen \%>\%
+  group_by(dataset) \%>\%
+  summarise(calc_scags(x,y,
+    scags=c("monotonic", "outlying", "convex")))
 
+}
+\seealso{
+sc_pairwise
 }

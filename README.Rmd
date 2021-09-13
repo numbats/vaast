@@ -14,20 +14,35 @@ knitr::opts_chunk$set(
 )
 ```
 
-# -
+# About 
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-__scagnostics__ or scatter plot diagnostics are a technique for automatically
-extracting interesting visual features from pair-wise combinations of variables
-in data. This package is an implementation of __graph theoretic scagnostics__
-in pure R.  
+The `vaast` package provides functions to compute scagnostics on pairs of numeric variables in a data set.
+
+The term __scagnostics__ refers to scatter plot diagnostics. This is a collection of techniques for automatically extracting interesting visual features from pairs of variables. This package is an implementation of graph theoretic scagnostics developed by Wilkinson, Anand, and Grossman (2005) in pure R.  
+
+## Installation
+
+``` r
+remotes::install_github("numbats/vaast")
+```
+
+## Examples
+
+```{r}
+data("anscombe_tidy")
+sc_outlying(anscombe$x1, anscombe$y1)
+sc_outlying(anscombe$x2, anscombe$y2)
+sc_outlying(anscombe$x3, anscombe$y3)
+sc_outlying(anscombe$x4, anscombe$y4)
+```
 
 
-## Implementation Details
+## About the calculations
 
-### Graph based 
+### Graph-based measures
 
 A 2-d scatter plot can be represented by a combination of three graphs
 which are computed directly from the Delauney-Voroni tesselation.
@@ -38,70 +53,14 @@ which are computed directly from the Delauney-Voroni tesselation.
 
 All graph based scagnostic measures are computed with respect to these three graphs.
 
-Prior to graph construction decisions must be made about filtering outliers (
-done with respect to the distribution of edge lengths in the triangulation
-) and thinning the size of the graphs by performing binning (for computational speed). For the moment we can forge ahead without these but it is worth keeping in mind that the package needs to be flexible enough to include them.  
+Prior to graph construction decisions must be made about filtering outliers (done with respect to the distribution of edge lengths in the triangulation) and thinning the size of the graphs by performing binning (for computational speed). For the moment we can forge ahead without these but it is worth keeping in mind that the package needs to be flexible enough to include them.  
 There are also opportunities to experiment with the preprocessing here. 
 
-Two MST measures "clumpy" and "outlying" are known to cause problems
+Two MST measures "clumpy" and "outlying" are known to cause problems.
 
-As all the graph based measures rely on the triangulation, they could be computed lazily. More concretely, if you are
-only interested in computing "skinny" you don't need to compute the spanning tree. If you computed "skinny" but wanted to then compute "convex" you shouldn't need to reconstruct the alpha-hull and so on... To begin let's not worry about that and focus on implementations of each measure.
+As all the graph based measures rely on the triangulation, they could be computed lazily. More concretely, if you are only interested in computing "skinny" you don't need to compute the spanning tree. If you computed "skinny" but wanted to then compute "convex" you shouldn't need to reconstruct the alpha-hull and so on... To begin let's not worry about that and focus on implementations of each measure.
 
-### Association based
+### Association-based measures
 
-These are computed directly from the 2-d point clouds, and do not need to be
-constructed from the graph. 
-
-See issue https://github.com/numbats/vaast/issues/2 for some thoughts. 
-
-
-## User Interface
-
-At the moment we have a very low level API. For pair-wise data we can create
-the triangulation and other bits necessary using `scree`
-
-```{r}
-x <- runif(100)
-y <- runif(100)
-scr <- scree(x, y)
-```
-
-Then the 'scree' object can be passed to various functions to compute scagnostics for a single combination of variables:
-
-```{r}
-sc_skinny(scr)
-sc_stringy(scr)
-```
-
-
-It would also be nice to be able to do:
-
-```{r}
-sc_skinny(x, y)
-```
-
-And design an interface that could handle mixing and matching various scagnostics together.
-
-```{r}
-anscombe %>% 
-  sc_estimate(.vars = everything(), 
-              .features = list(clumpy = sc_clumpy, skinny = sc_skinny))
-
-#> output would look something like a tibble
-
-#> from_var to_var clumpy skinny
-#> "x1" "y1" 0.3 0.2
-#> "x1", "y2", ...
-
-anscombe %>% 
-  sc_estimate(.vars = cross(x1:x4, y1:y4), 
-              .features = list(clumpy = sc_clumpy, skinny = sc_skinny))
-
-anscombe %>% 
-  sc_estimate(.vars = pairwise(x1:x4, y1:y4),
-              .features = list(clumpy = sc_clumpy, skinny = sc_skinny))
-```
-
-
+These are computed directly from the 2-d point clouds, and do not need to be constructed from the graph. 
 
