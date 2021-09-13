@@ -21,8 +21,7 @@ Authors@R:
              email = "dicook@monash.edu", 
              role = "aut", 
              comment = c(ORCID = "0000-0002-3813-7155")))
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: This package computes a range of scatterplot diagnostics (scagnostics) on pairs of numerical variables in a data set. It has both graph-based, and association-based metrics. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
