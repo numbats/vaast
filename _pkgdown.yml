@@ -8,7 +8,7 @@ reference:
 - title: scagnostics and supporting functions
   desc: These are the primary functions for computing scagnostics
   contents:
-  - starts_with("sc")
+  - starts_with("sc_")
   - scree
 - title: summary functions
   desc: Functions to compute multiple scagnostics and summarise output
