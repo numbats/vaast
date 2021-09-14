@@ -31,10 +31,22 @@ test_that("Stringy Scagnotist", {
 #Striated test
 x1 <- c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)
 y1 <- c(8,9,10,9,8,7,6,5,4,3,2,1,0,1,2)
-plot(x1,y1)
+#plot(x1,y1)
 
 test_that("Striated Scagnotist", {
   expect_equal(sc_striated(x1,y1), (11/15))
 })
 
+# Sparse Test
+x1 <- c(0,9,17,22,26,26,0,0,0,0,2)
+y1 <- c(0,0,0,0,0,2,10,17,23,26,26)
+#plot(x1,y1)
+test_that("Sparse Scagnotist", {
+  expect_equal(sc_sparse(x1,y1), (9/26))
+})
 
+# Skewed Test
+#plot(x1,y1)
+test_that("Sparse Scagnotist", {
+  expect_equal(sc_skewed(x1,y1), (4/7))
+})
